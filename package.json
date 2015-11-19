@@ -1,0 +1,26 @@
+{
+  "name": "flux-crud-sample",
+  "version": "0.0.1",
+  "description": "A sample CRUD page by Flux",
+  "main": "app.js",
+  "scripts": {
+    "build": "node_modules/.bin/gulp"
+  },
+  "author": "hieubm",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^12.0.0",
+    "flux": "^2.1.1",
+    "gulp": "^3.9.0",
+    "gulp-notify": "^2.2.0",
+    "react": "^0.14.2",
+    "reactify": "^1.1.1",
+    "underscore": "^1.8.3",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.5.0"
+  },
+  "dependencies": {
+    "react-datepicker": "^0.15.2",
+    "react-select": "^0.9.1"
+  }
+}
