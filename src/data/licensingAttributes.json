@@ -1,0 +1,30 @@
+
+{
+    attributes:
+    {
+        firstName: "vSS6J7ALd24",
+        hospitalCode: "qbj1eozsDbR",
+        appCode: "jprl9bjHEro",
+        appDate: "jprl9bjHEro",
+        appIssuedPlace: "KqQT81iDMcR",
+        applicationType: "NQenLV0S1xZ",
+        recipientName: "pRqweb0bcdF",
+        recipientPosition: "Zod5rBVELxI",
+        procesedBy: "Cz07zEg0WNr",
+        gender: "cnSMYCtPpJT",
+        birthday: "Cn1GmTKfyI7",
+        birthdayPlace: "obQAuqzOK8B",
+        nationlityText: "cC2kE3PC5DJ",
+        ethnicText: "kTiTyvPu4Dl",
+        idtype: "WNaEozOLk3i",
+        peopleIndentity: "voQ9uJATcnh",
+        idIssuedDate: "eWzlfNtNmyu",
+        idIssuedPlaceText: "UfE3b3uQtLl",
+        tempAddress: "u4YkJjpPYwq",
+        tempProvince: "Nft3hUNX8PY",
+        tempDistrict: "B5Wphrj9i8S",
+        mobilePhone: "kRCUbNnwADi",
+        email: "I3IyXCI5MsB",
+        discipline : "KuoPvulbl3f"
+    }
+}

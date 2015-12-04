@@ -2,14 +2,17 @@ var React = require("react"),
     PersonStore = require("../stores/person-store"),
     PersonActions = require("../actions/person-actions");
 
+var Button = require("react-bootstrap").Button;
+var Input = require("react-bootstrap").Input;
+
 var PersonFormSearch = React.createClass({
     _onClickSearch: function() {
-        PersonActions.searchPerson({fullName: this.state.nameSearch});
+        PersonActions.searchPerson({firstName: this.state.nameSearch});
     },
     
     getInitialState: function() {
         return {
-            nameSearch: "Viet"
+            nameSearch: "1900"
         }
     },
     _onChangeName: function(e) {
@@ -21,21 +24,25 @@ var PersonFormSearch = React.createClass({
         //PersonStore.addChangeListener(this._onClickSearch);
     },
     render: function() {
-        var btnSearch = (<input type="button" value="Search" className="btn btn-default" onClick={this._onClickSearch} />);
+        var btnSearch = (<Button bsStyle="default" onClick={this._onClickSearch} >Search</Button>);
 
         return (
             <form className="form">
-
-                <div className="form-group">
-                  <label>Họ tên:</label>
-                  <input className="form-control" value={this.state.nameSearch} onChange={this._onChangeName}   />
+                
+                <div className="row">
+                    <div className="col-md-12">
+                        <label>Họ tên:</label>
+                        <Input type="text"  bsSize="small"  value={this.state.nameSearch} onChange={this._onChangeName}   />
+                    </div>
                 </div>
-                <div className="form-group">
-                  <label>Mã số:</label>
-                  
+                <div className="row">
+                    <div className="col-md-12">
+                        <div  className="pull-right">
+                            {btnSearch}
+                        </div>
+                    </div>
                 </div>
-
-                {btnSearch}
+                
                 
             </form>
         );

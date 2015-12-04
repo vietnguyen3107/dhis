@@ -32,6 +32,12 @@ var PersonActions = {
             person: person,
         })
     },
+    clearPerson: function() {
+        AppDispatcher.dispatch({
+            action: PersonConstants.ACTION_CLEAR
+        })
+    },
+
 }
 
 module.exports = PersonActions;

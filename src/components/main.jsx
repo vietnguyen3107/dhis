@@ -5,6 +5,11 @@ var React = require("react"),
     PersonFormSearch = require("./person-form-search"),
     PersonList = require("./person-list");
 
+var EducationPanel = require("./education-panel");
+
+var Tabs = require("react-bootstrap").Tabs;
+var Tab = require("react-bootstrap").Tab;
+
 var Main = React.createClass({
     _onChange: function() {
         this.setState({
@@ -12,7 +17,7 @@ var Main = React.createClass({
         })
     },
     getInitialState: function() {
-    	PersonActions.searchPerson({fullName: 'Viet'});
+    	PersonActions.searchPerson({firstName: '1900'});
         return {
             persons: PersonStore.getPersons(),
         }
@@ -23,97 +28,73 @@ var Main = React.createClass({
     render: function() {
         return (
 
-			<div className='container' >
+		<div className='container' >
 			<nav className="navbar navbar-default">
-			  <div className="container-fluid">
-			    <div className="navbar-header">
-			      <a className="navbar-brand" href="#">LICENSING</a>
-			    </div>
-			    <div>
-			      <ul className="nav navbar-nav">
-			        <li className="active"><a href="#">HOME</a></li>
-			        <li><a href="#">CHỨC NĂNG</a></li>
-			        <li><a href="#">HỆ THỐNG</a></li>
-			        <li><a href="#">TRỢ GIÚP</a></li>
-			      </ul>
-			    </div>
-			  </div>
+				<div className="container-fluid">
+				    <div className="navbar-header">
+				      <a className="navbar-brand" href="#">LICENSING</a>
+				    </div>
+				    <div>
+				      <ul className="nav navbar-nav">
+				        <li className="active"><a href="#">HOME</a></li>
+				        <li><a href="#">CHỨC NĂNG</a></li>
+				        <li><a href="#">HỆ THỐNG</a></li>
+				        <li><a href="#">TRỢ GIÚP</a></li>
+				      </ul>
+				    </div>
+				</div>
 			</nav>
 
 			<div className='row'>
-				<div className='col-sm-4'>
+				<div className='col-md-4'>
 				    <div className="panel panel-default">
 						<div className="panel-heading">LIST</div>
 						<div className="panel-body">
-								
-							<PersonFormSearch/>
-							<PersonList persons={this.state.persons} />
-
-				  
-							
-						</div>
-					</div>
-				</div>
-				<div className='col-sm-8'>
-				  <ul className="nav nav-tabs">
-				    <li className="active"><a href="#home">GENERAL</a></li>
-				    <li><a href="#menu1">EDUCATION</a></li>
-				    <li><a href="#menu2">EXPERIENCE</a></li>
-				    <li><a href="#menu3">RESULT</a></li>
-					<li><a href="#menu4">LICENSE</a></li>
-				  </ul>
-
-				  <div className="tab-content">
-				    <div id="home" className="tab-pane fade in active">
-						<div className="panel panel-default">
-							<div className="panel-body">
-								<div>
-									<PersonForm/>
-
+							<div className="row">
+								<div className="col-md-12">
+								<PersonFormSearch/>
 								</div>
 							</div>
-						</div>
-				     
-				    </div>
-				    <div id="menu1" className="tab-pane fade">
-				      <div className="panel panel-default">
-							<div className="panel-body">
-								<div >sfsdfsdf</div>
-							</div>
-						</div>
-				    </div>
-				    <div id="menu2" className="tab-pane fade">
-				      <div className="panel panel-default">
-							<div className="panel-body">
-								<div></div>
-								
-							</div>
-						</div>
-				    </div>
-				    <div id="menu3" className="tab-pane fade">
-				      <div className="panel panel-default">
-							<div className="panel-body">
-								<div></div>
-								
-							</div>	
-							</div>
-						</div>
-				    <div id="menu4" className="tab-pane fade">
-				      <div className="panel panel-default">
-							<div className="panel-body">
-								<div></div>
-					
-							</div>
-						</div>
-				    </div>
-				  </div>
-				</div>
-				</div>
 
-				<div className="panel panel-default">
-				  <div className="panel-body">  <img src='img/logo.jpg'/></div>
+							<div className="row">
+								<div className="col-md-12">
+								<PersonList persons={this.state.persons} />
+								</div>
+							</div>
+				  
+						</div>
+						
+					</div>
+				</div>
+				<div className='col-md-8'>
+						<Tabs defaultActiveKey={1}>
+							<Tab eventKey={1} title="GENERAL" tabClassName="div">
+
+								<div className="panel-body">
+										<div>
+											<PersonForm/>
+
+										</div>
+								</div>
+					    	</Tab>
+						    <Tab eventKey={2} title="EDUCATION">
+						    	<div className="panel-body">
+										<div>											
+						    				<EducationPanel educations={this.state.persons}/>
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={3} title="Tab 3">Tab 3 content</Tab>
+						</Tabs>
+					
 				</div>
 			</div>
+			<div className='row'>
+				<div className="panel panel-default">
+					<div className="panel-body">  <img src='img/logo.jpg'/></div>
+				</div>
+			</div>
+		</div>
 
         );
     }

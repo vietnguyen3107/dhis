@@ -1,13 +1,14 @@
 var React = require("react"),
     PersonStore = require("../stores/person-store"),
     PersonActions = require("../actions/person-actions");
+var Table = require("react-bootstrap").Table;
 
 var PersonList = React.createClass({
     render: function() {
         var personList = this.props.persons.map(function(person, index) {
             return (
                 <tr key={index}>
-                    <td>{(person && person.fullName) ? person.fullName.value : ""}</td>
+                    <td>{(person && person.firstName) ? person.firstName.value : ""}</td>
                     <td>{(person && person.appCode) ? person.appCode.value : ""}</td>
                     <td><input type="button" value="Edit" className="btn btn-success btn-xs" onClick={PersonActions.editPerson.bind(null, index)} />
                     </td>
@@ -22,11 +23,11 @@ var PersonList = React.createClass({
 
         return (
             <div>
-                <table className="table">
+                <Table responsive>
                     <tbody>
                         {personList}
                     </tbody>
-                </table>
+                </Table>
             </div>
         );
     }

@@ -9,6 +9,28 @@ var CHANGE_EDIT_EVENT = 'change_edit';
 var _persons = [];
 var _editingIndex = -1;
 
+
+
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
+// -- App Manifest Json (Get this via Synch, so that it is defined ahead)
+    var _appManifest = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "manifest.webapp",
+        async: false
+    }).responseText);
+
+// -- URLs
+    var _dhisSiteURL = _appManifest.activities.dhis.href.replace( '/dhis-web-maintenance-appmanager', '' ) + '/';
+    var _dhisHomeURL = _dhisSiteURL + 'dhis-web-dashboard-integration/index.action';
+
+    var _queryURL_api = _dhisSiteURL + 'api/';
+
 function _addPerson(person, callback) {
 
     var instance = {};
@@ -33,7 +55,7 @@ function _addPerson(person, callback) {
 
     // PUT data
     $.ajax({
-        url: '../dhis/api/trackedEntityInstances/',
+        url: _queryURL_api + 'trackedEntityInstances/',
         type: 'POST',
         data: JSON.stringify(instance ),
         contentType: "application/json; charset=utf-8",
@@ -42,6 +64,7 @@ function _addPerson(person, callback) {
         success: function(response) {
             if(response.status == "SUCCESS"){
                 person.instance = {value: response.reference};
+                person.trackedEntityInstance = {value: response.reference};
                 if (typeof callback === "function") {
                     _persons.push(person);
                     callback();
@@ -70,50 +93,14 @@ function _removePerson(index) {
 
 function _editPerson(index, callback) {
     _editingIndex = index;
-    var editPerson = {};
-    $.get("../dhis/api/trackedEntityInstances/" + _persons[_editingIndex].instance.value, function (xml){
-        //orgunit
-        try{
-            editPerson.orgUnit = {value:xml.orgUnit};
-            editPerson.instance = {value:xml.trackedEntityInstance};
-            editPerson.trackedEntityInstance = {value:xml.trackedEntityInstance};
-            editPerson.trackedEntity = {value:xml.trackedEntity};
-
-            editPerson.applicationFileId = {value:xml.trackedEntityInstance};
-            editPerson.created = {value:xml.created};
-        }catch(err){}
-        
-        var attr = xml.attributes;      
-        attr.forEach(function(entry) {
-
-            name = entry.displayName;
-            val = {value:entry.value, uid: entry.attribute};
-            //for textbox and combobox
-                    if(name.length>0)
-                    {
-                        try{   
-                            if(name == "firstName") editPerson["fullName"] = val;    
-                            editPerson[lowercaseFirstLetter(name)] = val;                                           
-                        }
-                        catch(err)
-                        {console.log(err);}
-                        finally{}                   
-                    }
-        });
-
-        console.log(editPerson);
-        _persons[_editingIndex] = editPerson;
-
-        callback();
-
-    });
-
-
-
+    callback();
 }
 
 function _updatePerson(person, callback) {
     var instance = {};
+
+    console.log("editPerson");
+    console.log(person);
     instance.trackedEntity = person.trackedEntity.value;
     instance.orgUnit = person.orgUnit.value;
     var attributes = [];
@@ -130,12 +117,35 @@ function _updatePerson(person, callback) {
     
     instance.attributes = attributes;
     
-    console.log(instance);
-    // return false;
+
+    var enrollData = {};
+    enrollData.trackedEntityInstance = person.instance.value;
+    enrollData.orgUnit = person.orgUnit.value;
+    enrollData.program = _config.programUid;
+    enrollData.enrollmentDate = '2015-12-12';
+    enrollData.incidentDate = '2015-12-12';
+    
+    //enroll to program
+    $.ajax({
+        url: _queryURL_api + 'enrollments',
+        type: 'POST',
+        data: JSON.stringify(enrollData ),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        traditional: true,
+        success: function(response) {
+
+            
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status + ":" + thrownError + ajaxOptions);
+        }
+    });
+
 
     // PUT data
     $.ajax({
-        url: '../dhis/api/trackedEntityInstances/' + person.instance.value,
+        url: _queryURL_api + 'trackedEntityInstances/' + person.instance.value,
         type: 'PUT',
         data: JSON.stringify(instance ),
         contentType: "application/json; charset=utf-8",
@@ -156,7 +166,7 @@ function _updatePerson(person, callback) {
 }
 
 function _searchPerson(person) {
-    console.log('search...' + person.fullName);
+    console.log('search...' + person.firstName);
     // var toremove= new Array(); 
     // _persons.map(function(stu, index) {
         
@@ -249,27 +259,30 @@ AppDispatcher.register(function(payload) {
             
             break;
         case PersonConstants.ACTION_SEARCH:
-            var conditionSearch = "attribute=vSS6J7ALd24&attribute=jprl9bjHEro&attribute=Cn1GmTKfyI7";
-            if(payload.person != null && payload.person.fullName != "")
-                conditionSearch += "&query=LIKE:" + payload.person.fullName;
-            $.get("../dhis/api/trackedEntityInstances.json?ou=qjoyPJWgSou&" + conditionSearch, function (json){
-                //paging    //-------start paging----------------
-                var page = json.metaData.pager.page;
-                var pages = json.metaData.pager.pageCount;
-                var pageSize = json.metaData.pager.pageSize;
-                var total = json.metaData.pager.total;
+            var conditionSearch = "&pageSize=20";
+            if(payload.person != null && payload.person.firstName != "")
+                conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + payload.person.firstName;
 
-                var headers = json.headers;
-                var rows = json.rows;
+            $.get(_queryURL_api + "trackedEntityInstances.json?ou=qjoyPJWgSou&" + conditionSearch, function (json){
+                //paging    //-------start paging----------------
+                
+                var rows = json.trackedEntityInstances;
                 _persons.splice(0, _persons.length);
 
                 rows.forEach(function(entry) {
                     var person = {};
+                    person.orgUnit = {value:entry.orgUnit};
+                    person.instance = {value:entry.trackedEntityInstance};
+                    person.trackedEntityInstance = {value:entry.trackedEntityInstance};
+                    person.trackedEntity = {value:entry.trackedEntity};
+
+                    person.applicationFileId = {value:entry.trackedEntityInstance};
+                    person.created = {value:entry.created};
                     var i =0;
-                    headers.forEach(function(header) {
-                        var attr = lowercaseFirstLetter(header.column);
-                        var val = {value: entry[i]};
-                        person[attr] = val;
+                    entry.attributes.forEach(function(attr) {
+
+                        var val = {value: attr.value, uid: attr.attribute};
+                        person[lowercaseFirstLetter(attr.code)] = val;
                         i++;
                     });
 
@@ -277,7 +290,7 @@ AppDispatcher.register(function(payload) {
                     _persons.push(person);
                 });
 
-                //_persons = [{fullName: 'Nguyen Quoc Hùng', country: {label:'Việt Nam', value: 'vn'}}, {fullName: 'Nguyen Thi Thúy Hằng',country: {label:'Việt Nam', value: 'vn'}}];
+                //_persons = [{firstName: 'Nguyen Quoc Hùng', country: {label:'Việt Nam', value: 'vn'}}, {firstName: 'Nguyen Thi Thúy Hằng',country: {label:'Việt Nam', value: 'vn'}}];
                 PersonStore.emitChange();  
                 //console.log(json.username);
             });
