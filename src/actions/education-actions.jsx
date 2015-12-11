@@ -20,10 +20,10 @@ var EducationActions = {
             index: index,
         })
     },
-    updateEducation: function(education) {
+    updateEducation: function(obj) {
         AppDispatcher.dispatch({
             action: EducationConstants.ACTION_UPDATE,
-            education: education,
+            obj: obj,
         })
     },
     searchEducation: function(education) {

@@ -91,7 +91,7 @@ var Main = React.createClass({
 			</div>
 			<div className='row'>
 				<div className="panel panel-default">
-					<div className="panel-body">  <img src='img/logo.jpg'/></div>
+					<div className="panel-body">  <img src='images/dhis2.jpg'/></div>
 				</div>
 			</div>
 		</div>

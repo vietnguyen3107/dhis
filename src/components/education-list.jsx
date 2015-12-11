@@ -1,7 +1,7 @@
 var React = require("react"),
-    PersonStore = require("../stores/person-store"),
-    PersonActions = require("../actions/person-actions");
+    EducationActions = require("../actions/education-actions");
 var Table = require("react-bootstrap").Table;
+var Button = require("react-bootstrap").Button;
 
 var EducationList = React.createClass({
     render: function() {
@@ -18,6 +18,7 @@ var EducationList = React.createClass({
                         </td>
                   
                         <td>
+                            <Button bsStyle="success" bsSize="xsmall" onClick={EducationActions.editEducation.bind(null, index)}>Edit</Button>
                         </td>
 
                     </tr>

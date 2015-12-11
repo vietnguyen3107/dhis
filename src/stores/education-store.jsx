@@ -6,10 +6,11 @@ var _ = require("underscore"),
 var moment = require("moment");
 var PersonStore = require("../stores/person-store");
 
-var CHANGE_EVENT = 'change';
-var CHANGE_EDIT_EVENT = 'change_edit';
+var CHANGE_EVENT = 'education_change';
+var CHANGE_EDIT_EVENT = 'education_change_edit';
 
 var _personId = "";
+var _editingIndex = -1;
 var _educations = [];
 
 // -- 
@@ -39,7 +40,7 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _searchEducation(index, callback) {
+function _search(index, callback) {
     var person = PersonStore.getEditingPerson();
 
     var conditionSearch = "pageSize="+ _config.pageSize;
@@ -73,7 +74,7 @@ function _searchEducation(index, callback) {
                     entry.dataValues.forEach(function(attr) {
 
                         var val = {value: attr.value, uid: attr.dataElement};
-                        _p[lowercaseFirstLetter(attr.dataElement)] = val;
+                        _p[attr.dataElement] = val;
                         i++;
                     });
                 }
@@ -81,12 +82,14 @@ function _searchEducation(index, callback) {
                 _educations.push(_p);
             });
         }
-        EducationStore.emitChange();  
+        if (typeof callback === "function") {
+            callback();
+        }
     });
        
 }
 
-function _addEducation(education, callback){
+function _add(education, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
@@ -110,8 +113,7 @@ function _addEducation(education, callback){
     });
     
     obj.dataValues = dataValues;
-    
-    console.log(obj);
+
     // return false;
     // PUT data
     $.ajax({
@@ -131,8 +133,7 @@ function _addEducation(education, callback){
 
             }else{
                 alert(response.response.importSummaries[0].description);
-                _educations.push(education);
-                    callback();
+
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -142,9 +143,76 @@ function _addEducation(education, callback){
 
 }
 
+
+function _edit(index, callback) {
+    _editingIndex = index;
+    callback();
+}
+
+function _update(obj, callback) {
+    
+    var o = {};
+    var editingPerson = PersonStore.getEditingPerson();
+
+    o.program = _config.programUid;
+    o.orgUnit = editingPerson.orgUnit.value;
+    o.programStage = _config.educationStageUid;
+
+    o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
+    o.eventDate = moment();
+    o.status = "COMPLETED";
+
+    var dataValues = [];
+    Object.keys(obj).forEach(function(key){
+        if(typeof obj[key].uid !== "undefined" ){            
+            var dv = {};
+            dv.dataElement = obj[key].uid;
+            dv.value = obj[key].value;
+            dataValues.push(dv); 
+        } 
+    });
+    
+    o.dataValues = dataValues;
+
+    // return false;
+    // PUT data
+    $.ajax({
+        url: _queryURL_api + 'events/' + obj.event.value,
+        type: 'PUT',
+        data: JSON.stringify(o),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        traditional: true,
+        success: function(response) {
+            if(response.response.status == "SUCCESS"){
+                if (typeof callback === "function") {
+                    _educations[_editingIndex] = obj;
+                    callback();
+                }
+
+            }else{
+                alert(response.response.status);
+
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status + ":" + thrownError + ajaxOptions);
+        }
+    });
+
+}
+
+
 var EducationStore  = _.extend(EventEmitter.prototype, {
     getEducations: function() {
         return _educations;
+    },
+    getEditingObj: function() {
+        if (_editingIndex < 0) {
+            return null;
+        }
+        return jQuery.extend(true, {}, _educations[_editingIndex]);
+        // return _persons[_editingIndex];
     },
     emitChange: function() {
         this.emit(CHANGE_EVENT);
@@ -152,22 +220,47 @@ var EducationStore  = _.extend(EventEmitter.prototype, {
     addChangeListener: function(callback) {
         this.on(CHANGE_EVENT, callback);
     },
+    emitEdit: function(callback) {
+        this.emit(CHANGE_EDIT_EVENT, callback);
+    },
+    addEditListener: function(callback) {
+        this.on(CHANGE_EDIT_EVENT, callback);
+    },
 });
 
 AppDispatcher.register(function(payload) {
     switch (payload.action) {
-        case PersonConstants.ACTION_CLEAR:
-            _personId = "";
-            _educations.splice(0, _educations.length);
-            EducationStore.emitChange();  
-            break;
+        //PERSON
         case PersonConstants.ACTION_EDIT:
-            _searchEducation(payload.index,function(){
+
+            _search(payload.index,function(){
                 EducationStore.emitChange();
             });
             break;
+
+        case PersonConstants.ACTION_CLEAR:
+            _personId = "";
+            _educations.splice(0, _educations.length);
+
+            _editingIndex = -1;
+            EducationStore.emitChange();  
+            EducationStore.emitEdit();
+            break;
+        
+
+        //EDUCATION
         case EducationConstants.ACTION_ADD:
-            _addEducation(payload.education,function(){
+            _add(payload.education,function(){
+                EducationStore.emitChange();
+            });
+            break;
+        case EducationConstants.ACTION_EDIT:
+            _edit(payload.index,function(){
+                EducationStore.emitEdit();
+            });
+            break;
+        case EducationConstants.ACTION_UPDATE:
+            _update(payload.obj,function(){
                 EducationStore.emitChange();
             });
             break;
