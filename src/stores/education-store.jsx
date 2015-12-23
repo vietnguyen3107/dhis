@@ -10,7 +10,7 @@ var CHANGE_EVENT = 'education_change';
 var CHANGE_EDIT_EVENT = 'education_change_edit';
 
 var _personId = "";
-var _editingIndex = -1;
+var _editingIndexEducation = -1;
 var _educations = [];
 
 // -- 
@@ -40,13 +40,13 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _search(index, callback) {
+function _searchEducation(index, callback) {
     var person = PersonStore.getEditingPerson();
 
     var conditionSearch = "pageSize="+ _config.pageSize;
     if(person != null && person.instance != ""){
         _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programeStage=" + _config.educationStageUid;
+        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.educationStageUid;
     }
 
     $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){
@@ -89,7 +89,7 @@ function _search(index, callback) {
        
 }
 
-function _add(education, callback){
+function _addEducation(education, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
@@ -144,12 +144,12 @@ function _add(education, callback){
 }
 
 
-function _edit(index, callback) {
-    _editingIndex = index;
+function _editEducation(index, callback) {
+    _editingIndexEducation = index;
     callback();
 }
 
-function _update(obj, callback) {
+function _updateEducation(obj, callback) {
     
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
@@ -186,7 +186,7 @@ function _update(obj, callback) {
         success: function(response) {
             if(response.response.status == "SUCCESS"){
                 if (typeof callback === "function") {
-                    _educations[_editingIndex] = obj;
+                    _educations[_editingIndexEducation] = obj;
                     callback();
                 }
 
@@ -207,12 +207,12 @@ var EducationStore  = _.extend(EventEmitter.prototype, {
     getEducations: function() {
         return _educations;
     },
-    getEditingObj: function() {
-        if (_editingIndex < 0) {
+    getEditingEducation: function() {
+        if (_editingIndexEducation < 0) {
             return null;
         }
-        return jQuery.extend(true, {}, _educations[_editingIndex]);
-        // return _persons[_editingIndex];
+        return jQuery.extend(true, {}, _educations[_editingIndexEducation]);
+
     },
     emitChange: function() {
         this.emit(CHANGE_EVENT);
@@ -223,6 +223,7 @@ var EducationStore  = _.extend(EventEmitter.prototype, {
     emitEdit: function(callback) {
         this.emit(CHANGE_EDIT_EVENT, callback);
     },
+
     addEditListener: function(callback) {
         this.on(CHANGE_EDIT_EVENT, callback);
     },
@@ -232,8 +233,10 @@ AppDispatcher.register(function(payload) {
     switch (payload.action) {
         //PERSON
         case PersonConstants.ACTION_EDIT:
-
-            _search(payload.index,function(){
+			_editingIndexEducation = -1; 
+            EducationStore.emitEdit();
+			
+            _searchEducation(payload.index,function(){
                 EducationStore.emitChange();
             });
             break;
@@ -242,7 +245,7 @@ AppDispatcher.register(function(payload) {
             _personId = "";
             _educations.splice(0, _educations.length);
 
-            _editingIndex = -1;
+            _editingIndexEducation = -1;
             EducationStore.emitChange();  
             EducationStore.emitEdit();
             break;
@@ -250,17 +253,17 @@ AppDispatcher.register(function(payload) {
 
         //EDUCATION
         case EducationConstants.ACTION_ADD:
-            _add(payload.education,function(){
+            _addEducation(payload.education,function(){
                 EducationStore.emitChange();
             });
             break;
         case EducationConstants.ACTION_EDIT:
-            _edit(payload.index,function(){
+            _editEducation(payload.index,function(){
                 EducationStore.emitEdit();
             });
             break;
         case EducationConstants.ACTION_UPDATE:
-            _update(payload.obj,function(){
+            _updateEducation(payload.obj,function(){
                 EducationStore.emitChange();
             });
             break;

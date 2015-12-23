@@ -1,17 +1,17 @@
 var _ = require("underscore"),
     PersonConstants = require("../constants/person-constants"),
-    DisciplineConstants = require("../constants/discipline-constants"),
+    ExperienceConstants = require("../constants/experience-constants"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
 var PersonStore = require("../stores/person-store");
 
-var DISCIPLINE_CHANGE_EVENT = 'discipline_change';
-var DISCIPLINE_CHANGE_EDIT_EVENT = 'discipline_change_edit';
+var EXPERIENCE_CHANGE_EVENT = 'experience_change';
+var EXPERIENCE_CHANGE_EDIT_EVENT = 'experience_change_edit';
 
-var _personIdDiscipline = "";
-var _editingIndexDiscipline = -1;
-var _disciplines = [];
+var _personIdExperience = "";
+var _editingIndexExperience = -1;
+var _experiences = [];
 
 // -- 
     var _config = $.parseJSON($.ajax({
@@ -40,18 +40,18 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _searchDiscipline(index, callback) {
+function _searchExperience(index, callback) {
     var person = PersonStore.getEditingPerson();
 
     var conditionSearch = "pageSize="+ _config.pageSize;
     if(person != null && person.instance != ""){
         _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.disciplineStageUid;
+        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.experienceStageUid;
     }
 
     $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){
         var rows = json.events;
-        _disciplines.splice(0, _disciplines.length);
+        _experiences.splice(0, _experiences.length);
 
         if(typeof rows !== "undefined" && rows.length > 0){
             rows.forEach(function(entry) {
@@ -79,38 +79,35 @@ function _searchDiscipline(index, callback) {
                     });
                 }
 
-                _disciplines.push(_p);
+                _experiences.push(_p);
             });
         }
-		
         if (typeof callback === "function") {
-			
-			console.log(_disciplines);
             callback();
         }
     });
        
 }
 
-function _addDiscipline(discipline, callback){
+function _addExperience(experience, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     obj.program = _config.programUid;
     obj.orgUnit = editingPerson.orgUnit.value;
-    obj.programStage = _config.disciplineStageUid;
+    obj.programStage = _config.experienceStageUid;
 
     obj.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     obj.eventDate = moment();
     obj.status = "COMPLETED";
 
     var dataValues = [];
-    Object.keys(discipline).forEach(function(key){
-        if(typeof discipline[key].uid !== "undefined" ){            
+    Object.keys(experience).forEach(function(key){
+        if(typeof experience[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = discipline[key].uid;
-            dv.value = discipline[key].value;
+            dv.dataElement = experience[key].uid;
+            dv.value = experience[key].value;
             dataValues.push(dv); 
         } 
     });
@@ -130,7 +127,7 @@ function _addDiscipline(discipline, callback){
             if(response.response.importSummaries[0].status == "SUCCESS"){
                 obj.event = {value: response.reference};
                 if (typeof callback === "function") {
-                    _disciplines.push(discipline);
+                    _experiences.push(experience);
                     callback();
                 }
 
@@ -147,20 +144,20 @@ function _addDiscipline(discipline, callback){
 }
 
 
-function _editDiscipline(index, callback) {
-    _editingIndexDiscipline = index;
+function _editExperience(index, callback) {
+    _editingIndexExperience = index;
 
     callback();
 }
 
-function _updateDiscipline(obj, callback) {
+function _updateExperience(obj, callback) {
     
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     o.program = _config.programUid;
     o.orgUnit = editingPerson.orgUnit.value;
-    o.programStage = _config.DisciplineStageUid;
+    o.programStage = _config.experienceStageUid;
 
     o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     o.eventDate = moment();
@@ -190,7 +187,7 @@ function _updateDiscipline(obj, callback) {
         success: function(response) {
             if(response.response.status == "SUCCESS"){
                 if (typeof callback === "function") {
-                    _disciplines[_editingIndexDiscipline] = obj;
+                    _experiences[_editingIndexExperience] = obj;
                     callback();
                 }
 
@@ -207,29 +204,29 @@ function _updateDiscipline(obj, callback) {
 }
 
 
-var DisciplineStore  = _.extend(EventEmitter.prototype, {
-    getDisciplines: function() {
-        return _disciplines;
+var ExperienceStore  = _.extend(EventEmitter.prototype, {
+    getExperiences: function() {
+        return _experiences;
     },
-    getEditingDiscipline: function() {
-        if (_editingIndexDiscipline < 0) {
+    getEditingExperience: function() {
+        if (_editingIndexExperience < 0) {
             return null;
         }
-		
-        return jQuery.extend(true, {}, _disciplines[_editingIndexDiscipline]);
+		alert("experien = " + _editingIndexExperience);
+        return jQuery.extend(true, {}, _experiences[_editingIndexExperience]);
 
     },
-    emitChangeDiscipline: function() {
-        this.emit(DISCIPLINE_CHANGE_EVENT);
+    emitChangeExperience: function() {
+        this.emit(EXPERIENCE_CHANGE_EVENT);
     },
-    addChangeListenerDiscipline: function(callback) {
-        this.on(DISCIPLINE_CHANGE_EVENT, callback);
+    addChangeListenerExperience: function(callback) {
+        this.on(EXPERIENCE_CHANGE_EVENT, callback);
     },
-    emitEditDiscipline: function(callback) {
-        this.emit(DISCIPLINE_CHANGE_EDIT_EVENT, callback);
+    emitEditExperience: function(callback) {
+        this.emit(EXPERIENCE_CHANGE_EDIT_EVENT, callback);
     },
-    addEditListenerDiscipline: function(callback) {
-        this.on(DISCIPLINE_CHANGE_EDIT_EVENT, callback);
+    addEditListenerExperience: function(callback) {
+        this.on(EXPERIENCE_CHANGE_EDIT_EVENT, callback);
     },
 });
 
@@ -237,41 +234,41 @@ AppDispatcher.register(function(payload) {
     switch (payload.action) {
         //PERSON
         case PersonConstants.ACTION_EDIT:
-				_editingIndexDiscipline = -1;
-				DisciplineStore.emitEditDiscipline();
-            _searchDiscipline(payload.index,function(){
+				_editingIndexExperience = -1;
+				ExperienceStore.emitEditExperience();
+            _searchExperience(payload.index,function(){
 				
-                DisciplineStore.emitChangeDiscipline();
+                ExperienceStore.emitChangeExperience();
             });
             break;
 
         case PersonConstants.ACTION_CLEAR:
             _personId = "";
-            _disciplines.splice(0, _disciplines.length);
+            _experiences.splice(0, _experiences.length);
 
-            _editingIndexDiscipline = -1;
-            DisciplineStore.emitChangeDiscipline();  
-            DisciplineStore.emitEditDiscipline();
+            _editingIndexExperience = -1;
+            ExperienceStore.emitChangeExperience();  
+            ExperienceStore.emitEditExperience();
             break;
         
 
-        //Discipline
-        case DisciplineConstants.ACTION_ADD:
-            _addDiscipline(payload.discipline,function(){
-                DisciplineStore.emitChangeDiscipline();
+        //Experience
+        case ExperienceConstants.ACTION_ADD:
+            _addExperience(payload.experience,function(){
+                ExperienceStore.emitChangeExperience();
             });
             break;
-        case DisciplineConstants.ACTION_EDIT:
-            _editDiscipline(payload.index,function(){
-                DisciplineStore.emitEditDiscipline();
+        case ExperienceConstants.ACTION_EDIT:
+            _editExperience(payload.index,function(){
+                ExperienceStore.emitEditExperience();
             });
             break;
-        case DisciplineConstants.ACTION_UPDATE:
-            _updateDiscipline(payload.obj,function(){
-                DisciplineStore.emitChangeDiscipline();
+        case ExperienceConstants.ACTION_UPDATE:
+            _updateExperience(payload.obj,function(){
+                ExperienceStore.emitChangeExperience();
             });
             break;
     }
 });
 
-module.exports = DisciplineStore;
+module.exports = ExperienceStore;

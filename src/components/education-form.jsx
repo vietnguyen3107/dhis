@@ -13,34 +13,34 @@ var EducationActions = require("../actions/education-actions");
 
 var EducationForm = React.createClass({
     _onClickAdd: function() {        
-        EducationActions.addEducation(this.state.editingObj);
+        EducationActions.addEducation(this.state.editingEducation);
     },
     _onClickUpdate: function() {
-        EducationActions.updateEducation(this.state.editingObj);
+        EducationActions.updateEducation(this.state.editingEducation);
     }, 
     _onClickClear: function() {
         this.setState({
-            editingObj: null,
+            editingEducation: null,
             editingPersonUid: null,
-            editingUid: null
+            editingEducationUid: null
         });
     },
 
     _onSelectChange: function(attr, val, e){
        
-        if(this.state.editingObj == null ){
-            this.state.editingObj = {};
+        if(this.state.editingEducation == null ){
+            this.state.editingEducation = {};
         }
-        if(this.state.editingObj[attr] == null){
-            this.state.editingObj[attr] = {};
-            this.state.editingObj[attr].value = val;
-            this.state.editingObj[attr].uid = this.state.attrs[attr];
+        if(this.state.editingEducation[attr] == null){
+            this.state.editingEducation[attr] = {};
+            this.state.editingEducation[attr].value = val;
+            this.state.editingEducation[attr].uid = this.state.attrs[attr];
 
         }else{
-            this.state.editingObj[attr].value = val;
+            this.state.editingEducation[attr].value = val;
         }
 
-        console.log(this.state.editingObj);
+        console.log(this.state.editingEducation);
 
 
     },
@@ -48,61 +48,61 @@ var EducationForm = React.createClass({
     _onDatePickerChangeYYYYMMDD: function(attr, val, e){
         val = val.format("YYYY-MM-DD");
        
-        if(this.state.editingObj == null ){
-            this.state.editingObj = {};
+        if(this.state.editingEducation == null ){
+            this.state.editingEducation = {};
         }
-        if(this.state.editingObj[attr] == null){
-            this.state.editingObj[attr] = {};
-            this.state.editingObj[attr].value = val;
-            this.state.editingObj[attr].uid = this.state.attrs[attr];
+        if(this.state.editingEducation[attr] == null){
+            this.state.editingEducation[attr] = {};
+            this.state.editingEducation[attr].value = val;
+            this.state.editingEducation[attr].uid = this.state.attrs[attr];
 
         }else{
-            this.state.editingObj[attr].value = val;
+            this.state.editingEducation[attr].value = val;
         }
 
-        console.log(this.state.editingObj);
+        console.log(this.state.editingEducation);
 
 
     },
     _onChange: function(attr, e) {
 
-        if(this.state.editingObj == null ){
-            this.state.editingObj = {};
+        if(this.state.editingEducation == null ){
+            this.state.editingEducation = {};
         }
-        if(this.state.editingObj[attr] == null){
-            this.state.editingObj[attr] = {};
-            this.state.editingObj[attr].value = e.target.value;
-            this.state.editingObj[attr].uid = this.state.attrs[attr];
+        if(this.state.editingEducation[attr] == null){
+            this.state.editingEducation[attr] = {};
+            this.state.editingEducation[attr].value = e.target.value;
+            this.state.editingEducation[attr].uid = this.state.attrs[attr];
 
         }else{
-            this.state.editingObj[attr].value = e.target.value;
+            this.state.editingEducation[attr].value = e.target.value;
         }
         this.setState({
-            editingObj: this.state.editingObj,
+            editingEducation: this.state.editingEducation,
         });
         
     },
     _onEdit: function() {
-        var editingObj = EducationStore.getEditingObj();
+        var editingEducation = EducationStore.getEditingEducation();
 
-        if(editingObj && editingObj.event ){
+        if(editingEducation && editingEducation.event ){
             this.setState({
-                editingObj: editingObj,
-                editingUid: editingObj.event.value
+                editingEducation: editingEducation,
+                editingEducationUid: editingEducation.event.value
             });
         }else{
             this.setState({
-                editingUid: null,
-                editingObj: null,
+                editingEducationUid: null,
+                editingEducation: null,
             });
         }
     },
     getInitialState: function() {
         return {
             isLoading: false,
-            editingObj: null,
+            editingEducation: null,
             editingPersonUid : null,
-            editingUid : null,
+            editingEducationUid : null,
             forms: [],
             degrees: [],
         }
@@ -172,10 +172,10 @@ var EducationForm = React.createClass({
 
                         value=
                         {
-                            (self.state.editingObj && self.state.editingObj.degreeNo) ? 
-                                self.state.editingObj.degreeNo.value : 
-                                ((self.state.editingObj && self.state.editingObj.degreeNo == null && self.state.editingObj[self.state.attrs["degreeNo"]]) ?
-                                        self.state.editingObj[self.state.attrs["degreeNo"]].value  : "")
+                            (self.state.editingEducation && self.state.editingEducation.degreeNo) ? 
+                                self.state.editingEducation.degreeNo.value : 
+                                ((self.state.editingEducation && self.state.editingEducation.degreeNo == null && self.state.editingEducation[self.state.attrs["degreeNo"]]) ?
+                                        self.state.editingEducation[self.state.attrs["degreeNo"]].value  : "")
                         }
                     />
                         
@@ -189,10 +189,10 @@ var EducationForm = React.createClass({
                         
                         selected=
                         {
-                            (self.state.editingObj && self.state.editingObj.conferDate) ? 
-                                moment(self.state.editingObj.conferDate.value, "YYYY-MM-DD") : 
-                                ((self.state.editingObj && self.state.editingObj.conferDate == null && self.state.editingObj[self.state.attrs["conferDate"]]) ?
-                                    moment(self.state.editingObj[self.state.attrs["conferDate"]].value, "YYYY-MM-DD")   : null)
+                            (self.state.editingEducation && self.state.editingEducation.conferDate) ? 
+                                moment(self.state.editingEducation.conferDate.value, "YYYY-MM-DD") : 
+                                ((self.state.editingEducation && self.state.editingEducation.conferDate == null && self.state.editingEducation[self.state.attrs["conferDate"]]) ?
+                                    moment(self.state.editingEducation[self.state.attrs["conferDate"]].value, "YYYY-MM-DD")   : null)
                         }
                     ></DatePicker>
                 </div>
@@ -208,10 +208,10 @@ var EducationForm = React.createClass({
                         
                         selected=
                         {
-                            (self.state.editingObj && self.state.editingObj.startDate) ? 
-                                moment(self.state.editingObj.startDate.value, "YYYY-MM-DD") : 
-                                ((self.state.editingObj && self.state.editingObj.startDate == null && self.state.editingObj[self.state.attrs["startDate"]]) ?
-                                    moment(self.state.editingObj[self.state.attrs["startDate"]].value, "YYYY-MM-DD")   : null)
+                            (self.state.editingEducation && self.state.editingEducation.startDate) ? 
+                                moment(self.state.editingEducation.startDate.value, "YYYY-MM-DD") : 
+                                ((self.state.editingEducation && self.state.editingEducation.startDate == null && self.state.editingEducation[self.state.attrs["startDate"]]) ?
+                                    moment(self.state.editingEducation[self.state.attrs["startDate"]].value, "YYYY-MM-DD")   : null)
                         }
                     ></DatePicker>
                 </div>
@@ -224,10 +224,10 @@ var EducationForm = React.createClass({
 
                         selected=
                         {
-                            (self.state.editingObj && self.state.editingObj.endDate) ? 
-                                moment(self.state.editingObj.endDate.value, "YYYY-MM-DD") : 
-                                ((self.state.editingObj && self.state.editingObj.endDate == null && self.state.editingObj[self.state.attrs["endDate"]]) ?
-                                    moment(self.state.editingObj[self.state.attrs["endDate"]].value, "YYYY-MM-DD")   : null)
+                            (self.state.editingEducation && self.state.editingEducation.endDate) ? 
+                                moment(self.state.editingEducation.endDate.value, "YYYY-MM-DD") : 
+                                ((self.state.editingEducation && self.state.editingEducation.endDate == null && self.state.editingEducation[self.state.attrs["endDate"]]) ?
+                                    moment(self.state.editingEducation[self.state.attrs["endDate"]].value, "YYYY-MM-DD")   : null)
                         }
                     ></DatePicker>
 
@@ -243,10 +243,10 @@ var EducationForm = React.createClass({
                         onChange={self._onChange.bind(this, 'standardSchool')}
                         value=
                         {
-                            (self.state.editingObj && self.state.editingObj.standardSchool) ? 
-                                self.state.editingObj.standardSchool.value : 
-                                ((self.state.editingObj && self.state.editingObj.standardSchool == null && self.state.editingObj[self.state.attrs["standardSchool"]]) ?
-                                        self.state.editingObj[self.state.attrs["standardSchool"]].value  : "")
+                            (self.state.editingEducation && self.state.editingEducation.standardSchool) ? 
+                                self.state.editingEducation.standardSchool.value : 
+                                ((self.state.editingEducation && self.state.editingEducation.standardSchool == null && self.state.editingEducation[self.state.attrs["standardSchool"]]) ?
+                                        self.state.editingEducation[self.state.attrs["standardSchool"]].value  : "")
                         }
                     />
                 </div>
@@ -260,10 +260,10 @@ var EducationForm = React.createClass({
                     onChange={self._onChange.bind(this, 'schoolText')}
                     value=
                         {
-                            (self.state.editingObj && self.state.editingObj.schoolText) ? 
-                                self.state.editingObj.schoolText.value : 
-                                ((self.state.editingObj && self.state.editingObj.schoolText == null && self.state.editingObj[self.state.attrs["schoolText"]]) ?
-                                        self.state.editingObj[self.state.attrs["schoolText"]].value  : "")
+                            (self.state.editingEducation && self.state.editingEducation.schoolText) ? 
+                                self.state.editingEducation.schoolText.value : 
+                                ((self.state.editingEducation && self.state.editingEducation.schoolText == null && self.state.editingEducation[self.state.attrs["schoolText"]]) ?
+                                        self.state.editingEducation[self.state.attrs["schoolText"]].value  : "")
                         }
                     />
                 </div>
@@ -279,10 +279,10 @@ var EducationForm = React.createClass({
                         options={self.state.degrees}
                         value=
                         {
-                            (self.state.editingObj && self.state.editingObj.degree) ? 
-                                self.state.editingObj.degree.value : 
-                                ((self.state.editingObj && self.state.editingObj.degree == null && self.state.editingObj[self.state.attrs["degree"]]) ?
-                                        self.state.editingObj[self.state.attrs["degree"]].value  : "")
+                            (self.state.editingEducation && self.state.editingEducation.degree) ? 
+                                self.state.editingEducation.degree.value : 
+                                ((self.state.editingEducation && self.state.editingEducation.degree == null && self.state.editingEducation[self.state.attrs["degree"]]) ?
+                                        self.state.editingEducation[self.state.attrs["degree"]].value  : "")
                         }
                 ></SimpleSelect>
 
@@ -298,10 +298,10 @@ var EducationForm = React.createClass({
                         options={self.state.forms}
                         value=
                         {
-                            (self.state.editingObj && self.state.editingObj.form) ? 
-                                self.state.editingObj.form.value : 
-                                ((self.state.editingObj && !self.state.editingObj.form && self.state.editingObj[self.state.attrs["form"]]) ?
-                                        self.state.editingObj[self.state.attrs["form"]].value  : "")
+                            (self.state.editingEducation && self.state.editingEducation.form) ? 
+                                self.state.editingEducation.form.value : 
+                                ((self.state.editingEducation && !self.state.editingEducation.form && self.state.editingEducation[self.state.attrs["form"]]) ?
+                                        self.state.editingEducation[self.state.attrs["form"]].value  : "")
                         }
 
                 ></SimpleSelect>
@@ -316,9 +316,9 @@ var EducationForm = React.createClass({
             </div>
             <div className="row">
                 <div className="col-md-12">
-                    {self.state.editingUid ? btnUpdate : btnAdd}
+                    {self.state.editingEducationUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
+                    <Button bsStyle="default" onClick={self._onClickClear}>Clear {self.state.editingEducationUid}</Button>
                     </div>
                 </div>
             </div>

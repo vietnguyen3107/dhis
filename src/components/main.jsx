@@ -6,6 +6,8 @@ var React = require("react"),
     PersonList = require("./person-list");
 
 var EducationPanel = require("./education-panel");
+var ExperiencePanel = require("./experience-panel");
+var DisciplinePanel = require("./discipline-panel");
 
 var Tabs = require("react-bootstrap").Tabs;
 var Tab = require("react-bootstrap").Tab;
@@ -80,11 +82,25 @@ var Main = React.createClass({
 						    <Tab eventKey={2} title="EDUCATION">
 						    	<div className="panel-body">
 										<div>											
-						    				<EducationPanel educations={this.state.persons}/>
+						    				<EducationPanel />
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={3} title="Tab 3">Tab 3 content</Tab>
+						    <Tab eventKey={3} title="EXPERIENCE">
+						    	<div className="panel-body">
+										<div>											
+						    				<ExperiencePanel />
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={4} title="DISCIPLINE">
+						    	<div className="panel-body">
+										<div>											
+						    				<DisciplinePanel />
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={14} title="Tab 14">Tab 14 content</Tab>
 						</Tabs>
 					
 				</div>
