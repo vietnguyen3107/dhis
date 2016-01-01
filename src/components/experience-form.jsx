@@ -369,7 +369,7 @@ var ExperienceForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingExperienceUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClear}>Clear  {self.state.editingExperienceUid}</Button>
+                    <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

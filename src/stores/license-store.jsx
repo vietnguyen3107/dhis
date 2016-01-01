@@ -1,17 +1,17 @@
 var _ = require("underscore"),
     PersonConstants = require("../constants/person-constants"),
-    ExperienceConstants = require("../constants/experience-constants"),
+    LicenseConstants = require("../constants/license-constants"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
 var PersonStore = require("../stores/person-store");
 
-var EXPERIENCE_CHANGE_EVENT = 'experience_change';
-var EXPERIENCE_CHANGE_EDIT_EVENT = 'experience_change_edit';
+var CHANGE_EVENT = 'license_change';
+var CHANGE_EDIT_EVENT = 'license_change_edit';
 
-var _personIdExperience = "";
-var _editingIndexExperience = -1;
-var _experiences = [];
+var _personId = "";
+var _editingIndexLicense = -1;
+var _license = {};
 
 // -- 
     var _config = $.parseJSON($.ajax({
@@ -40,20 +40,20 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _searchExperience(index, callback) {
+function _searchLicense(index, callback) {
     var person = PersonStore.getEditingPerson();
 
-    var conditionSearch = "pageSize="+ _config.pageSize;
+    var conditionSearch = "pageSize=1";
     if(person != null && person.instance != ""){
         _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.experienceStageUid;
+        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.licenseStageUid + "&programStatus=ACTIVE";
     }
 
     $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){
         var rows = json.events;
-        _experiences.splice(0, _experiences.length);
 
         if(typeof rows !== "undefined" && rows.length > 0){
+
             rows.forEach(function(entry) {
                 var _p = {};
                 _p.event = {value:entry.event};
@@ -79,9 +79,11 @@ function _searchExperience(index, callback) {
                     });
                 }
 
-                _experiences.push(_p);
+                _license = _p;
             });
         }
+		
+
         if (typeof callback === "function") {
             callback();
         }
@@ -89,25 +91,25 @@ function _searchExperience(index, callback) {
        
 }
 
-function _addExperience(experience, callback){
+function _addLicense(license, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     obj.program = _config.programUid;
     obj.orgUnit = editingPerson.orgUnit.value;
-    obj.programStage = _config.experienceStageUid;
+    obj.programStage = _config.licenseStageUid;
 
     obj.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     obj.eventDate = moment();
-    obj.status = "COMPLETED";
+    obj.status = "ACTIVE";
 
     var dataValues = [];
-    Object.keys(experience).forEach(function(key){
-        if(typeof experience[key].uid !== "undefined" ){            
+    Object.keys(license).forEach(function(key){
+        if(typeof license[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = experience[key].uid;
-            dv.value = experience[key].value;
+            dv.dataElement = license[key].uid;
+            dv.value = license[key].value;
             dataValues.push(dv); 
         } 
     });
@@ -127,7 +129,7 @@ function _addExperience(experience, callback){
             if(response.response.importSummaries[0].status == "SUCCESS"){
                 obj.event = {value: response.reference};
                 if (typeof callback === "function") {
-                    _experiences.push(experience);
+                    
                     callback();
                 }
 
@@ -144,24 +146,22 @@ function _addExperience(experience, callback){
 }
 
 
-function _editExperience(index, callback) {
-    _editingIndexExperience = index;
+function _editLicense(index, callback) {
 
-    callback();
 }
 
-function _updateExperience(obj, callback) {
+function _updateLicense(obj, callback) {
     
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     o.program = _config.programUid;
     o.orgUnit = editingPerson.orgUnit.value;
-    o.programStage = _config.experienceStageUid;
+    o.programStage = _config.licenseStageUid;
 
     o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     o.eventDate = moment();
-    o.status = "COMPLETED";
+    o.status = "ACTIVE";
 
     var dataValues = [];
     Object.keys(obj).forEach(function(key){
@@ -186,8 +186,10 @@ function _updateExperience(obj, callback) {
         traditional: true,
         success: function(response) {
             if(response.response.status == "SUCCESS"){
+				_license = obj;
+		
                 if (typeof callback === "function") {
-                    _experiences[_editingIndexExperience] = obj;
+                    
                     callback();
                 }
 
@@ -204,28 +206,26 @@ function _updateExperience(obj, callback) {
 }
 
 
-var ExperienceStore  = _.extend(EventEmitter.prototype, {
-    getExperiences: function() {
-        return _experiences;
+var LicenseStore  = _.extend(EventEmitter.prototype, {
+    getLicense: function() {
+        return _license;
     },
-    getEditingExperience: function() {
-        if (_editingIndexExperience < 0) {
-            return null;
-        }
-        return jQuery.extend(true, {}, _experiences[_editingIndexExperience]);
+    getEditingLicense: function() {
+        return _license;
 
     },
-    emitChangeExperience: function() {
-        this.emit(EXPERIENCE_CHANGE_EVENT);
+    emitChange: function() {
+        this.emit(CHANGE_EVENT);
     },
-    addChangeListenerExperience: function(callback) {
-        this.on(EXPERIENCE_CHANGE_EVENT, callback);
+    addChangeListener: function(callback) {
+        this.on(CHANGE_EVENT, callback);
     },
-    emitEditExperience: function(callback) {
-        this.emit(EXPERIENCE_CHANGE_EDIT_EVENT, callback);
+    emitEdit: function(callback) {
+        this.emit(CHANGE_EDIT_EVENT, callback);
     },
-    addEditListenerExperience: function(callback) {
-        this.on(EXPERIENCE_CHANGE_EDIT_EVENT, callback);
+
+    addEditListener: function(callback) {
+        this.on(CHANGE_EDIT_EVENT, callback);
     },
 });
 
@@ -233,41 +233,44 @@ AppDispatcher.register(function(payload) {
     switch (payload.action) {
         //PERSON
         case PersonConstants.ACTION_EDIT:
-				_editingIndexExperience = -1;
-				ExperienceStore.emitEditExperience();
-            _searchExperience(payload.index,function(){
-				
-                ExperienceStore.emitChangeExperience();
+			_license = null; 
+            
+			
+            _searchLicense(payload.index,function(){
+                LicenseStore.emitChange();
+				LicenseStore.emitEdit();
             });
             break;
 
         case PersonConstants.ACTION_CLEAR:
             _personId = "";
-            _experiences.splice(0, _experiences.length);
-
-            _editingIndexExperience = -1;
-            ExperienceStore.emitChangeExperience();  
-            ExperienceStore.emitEditExperience();
+            _license = null; 
+           
+            LicenseStore.emitChange();  
+            LicenseStore.emitEdit();
             break;
         
 
-        //Experience
-        case ExperienceConstants.ACTION_ADD:
-            _addExperience(payload.experience,function(){
-                ExperienceStore.emitChangeExperience();
+        //license
+        case LicenseConstants.ACTION_ADD:
+            _addLicense(payload.license,function(){
+				_searchLicense(0,function(){
+					LicenseStore.emitChange();
+					LicenseStore.emitEdit();
+				});
             });
             break;
-        case ExperienceConstants.ACTION_EDIT:
-            _editExperience(payload.index,function(){
-                ExperienceStore.emitEditExperience();
+        case LicenseConstants.ACTION_EDIT:
+            _editLicense(payload.index,function(){
+                LicenseStore.emitEdit();
             });
             break;
-        case ExperienceConstants.ACTION_UPDATE:
-            _updateExperience(payload.obj,function(){
-                ExperienceStore.emitChangeExperience();
+        case LicenseConstants.ACTION_UPDATE:
+            _updateLicense(payload.obj,function(){
+                LicenseStore.emitChange();
             });
             break;
     }
 });
 
-module.exports = ExperienceStore;
+module.exports = LicenseStore;

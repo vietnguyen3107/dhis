@@ -8,6 +8,7 @@ var React = require("react"),
 var EducationPanel = require("./education-panel");
 var ExperiencePanel = require("./experience-panel");
 var DisciplinePanel = require("./discipline-panel");
+var LicensePanel = require("./license-panel");
 
 var Tabs = require("react-bootstrap").Tabs;
 var Tab = require("react-bootstrap").Tab;
@@ -97,6 +98,13 @@ var Main = React.createClass({
 						    	<div className="panel-body">
 										<div>											
 						    				<DisciplinePanel />
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={5} title="LICENSe">
+						    	<div className="panel-body">
+										<div>											
+						    				<LicensePanel />
 										</div>
 								</div>
 						    </Tab>
