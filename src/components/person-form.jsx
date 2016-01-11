@@ -18,6 +18,10 @@ var attrs = $.parseJSON($.ajax({
 
 var PersonForm = React.createClass({
     _onClickAdd: function() {
+		
+		if(this.state.editingPerson.orgUnit == null){
+			this.state.editingPerson.orgUnit = {val: this.props.orgUnitUid};
+		}
         PersonActions.addPerson(this.state.editingPerson);
 
     },

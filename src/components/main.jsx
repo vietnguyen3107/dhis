@@ -3,12 +3,16 @@ var React = require("react"),
     PersonStore = require("../stores/person-store"),
     PersonForm = require("./person-form"),
     PersonFormSearch = require("./person-form-search"),
-    PersonList = require("./person-list");
+    PersonList = require("./person-list"),
+	Global = require('react-global');
+var I18n = require("i18n-js");
 
 var EducationPanel = require("./education-panel");
 var ExperiencePanel = require("./experience-panel");
 var DisciplinePanel = require("./discipline-panel");
 var LicensePanel = require("./license-panel");
+var ResultPanel = require("./result-panel");
+
 
 var Tabs = require("react-bootstrap").Tabs;
 var Tab = require("react-bootstrap").Tab;
@@ -19,19 +23,38 @@ var Main = React.createClass({
             persons: PersonStore.getPersons(),
         })
     },
+	_onChildChanged: function(newState) {
+		console.log("ne state");
+		console.log(newState);
+        this.setState({ orgUnitUid: newState.orgUnitUid });
+    },
     getInitialState: function() {
-    	PersonActions.searchPerson({firstName: '1900'});
+    	
         return {
             persons: PersonStore.getPersons(),
+			me: [],
+			orgUnitUid: ""
         }
     },
     componentDidMount: function() {
         PersonStore.addChangeListener(this._onChange);
     },
+	componentWillMount: function(){
+        var self = this;
+
+       
+        //me
+        $.get("../../../../dhis/api/me.json", function (json){
+            self.setState({me: json});
+            
+        });
+		//PersonActions.searchPerson({firstName: '1900'});
+	},
     render: function() {
         return (
-
+		
 		<div className='container' >
+			
 			<nav className="navbar navbar-default">
 				<div className="container-fluid">
 				    <div className="navbar-header">
@@ -40,9 +63,9 @@ var Main = React.createClass({
 				    <div>
 				      <ul className="nav navbar-nav">
 				        <li className="active"><a href="#">HOME</a></li>
-				        <li><a href="#">CHỨC NĂNG</a></li>
-				        <li><a href="#">HỆ THỐNG</a></li>
-				        <li><a href="#">TRỢ GIÚP</a></li>
+				        <li><a href="#">FUNCTIONAL</a></li>
+				        <li><a href="#">SYSTEM</a></li>
+				        <li><a href="#">HELP</a></li>
 				      </ul>
 				    </div>
 				</div>
@@ -55,13 +78,13 @@ var Main = React.createClass({
 						<div className="panel-body">
 							<div className="row">
 								<div className="col-md-12">
-								<PersonFormSearch/>
+								<PersonFormSearch me={this.state.me} callbackParent={this._onChildChanged}/>
 								</div>
 							</div>
 
 							<div className="row">
 								<div className="col-md-12">
-								<PersonList persons={this.state.persons} />
+								<PersonList persons={this.state.persons}  />
 								</div>
 							</div>
 				  
@@ -75,7 +98,7 @@ var Main = React.createClass({
 
 								<div className="panel-body">
 										<div>
-											<PersonForm/>
+											<PersonForm orgUnitUid={this.state.orgUnitUid}/>
 
 										</div>
 								</div>
@@ -101,10 +124,17 @@ var Main = React.createClass({
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={5} title="LICENSe">
+						    <Tab eventKey={5} title="LICENSE">
 						    	<div className="panel-body">
 										<div>											
 						    				<LicensePanel />
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={6} title="RESULT">
+						    	<div className="panel-body">
+										<div>											
+						    				<ResultPanel />
 										</div>
 								</div>
 						    </Tab>
@@ -123,5 +153,6 @@ var Main = React.createClass({
         );
     }
 });
+
 
 module.exports = Main;

@@ -4,6 +4,21 @@ var Table = require("react-bootstrap").Table;
 var Button = require("react-bootstrap").Button;
 
 var EducationList = React.createClass({
+	componentWillMount: function(){
+        var self = this;
+
+        $.get("./data/educationAttributes.json", function (json){
+            self.setState({attrs: json});
+            
+        });
+        
+	},
+	getInitialState: function() {
+        return {
+         
+            attrs: [],
+        }
+    },
     render: function() {
         var educationList = null;
         if(this.props.educations != null)
@@ -11,12 +26,17 @@ var EducationList = React.createClass({
             educationList = this.props.educations.map(function(edu, index) {
                 return (
                     <tr key={index}>
-                        <td>{(edu && edu.orgUnitName) ? edu.orgUnitName.value : ""}</td>
-                        <td>{(edu && edu.enrollmentStatus) ? edu.enrollmentStatus.value : ""}</td>
+                        <td>{(edu.degreeNo != null) ? edu.degreeNo.value :(edu[this.state.attrs["degreeNo"]] != null ? edu[this.state.attrs["degreeNo"]].value : "")}</td>
+                        
                         <td>
-                            {(edu && edu.eventDate) ? edu.eventDate.value : ""}
+                            {(edu.startDate != null) ? edu.startDate.value :(edu[this.state.attrs["startDate"]] != null ? edu[this.state.attrs["startDate"]].value : "")}
                         </td>
-                  
+						<td>
+                            {(edu.endDate != null) ? edu.endDate.value :(edu[this.state.attrs["endDate"]] != null ? edu[this.state.attrs["endDate"]].value : "")}
+                        </td>
+						
+						<td>{(edu && edu.enrollmentStatus) ? edu.enrollmentStatus.value : ""}</td>
+						
                         <td>
                             <Button bsStyle="success" bsSize="xsmall" onClick={EducationActions.editEducation.bind(null, index)}>Edit</Button>
                         </td>
@@ -27,8 +47,17 @@ var EducationList = React.createClass({
         }
         return (
             <div>
-                <div>List</div>
+                <div></div>
                 <Table responsive>
+					<thead>
+						<tr>
+							<th>degreeNo</th>
+							<th>startDate</th>
+							<th>endDate</th>
+							<th>status</th>
+							<th>#</th>
+						</tr>
+					</thead>
                     <tbody>
                         {educationList}
                     </tbody>

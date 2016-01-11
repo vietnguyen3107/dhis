@@ -8,8 +8,9 @@ var PersonList = React.createClass({
         var personList = this.props.persons.map(function(person, index) {
             return (
                 <tr key={index}>
-                    <td>{(person && person.firstName) ? person.firstName.value : ""}</td>
                     <td>{(person && person.appCode) ? person.appCode.value : ""}</td>
+                    <td>{(person && person.firstName) ? person.firstName.value : ""}</td>
+                    <td>{(person && person.birthday) ? person.birthday.value : ""}</td>
                     <td><input type="button" value="Edit" className="btn btn-success btn-xs" onClick={PersonActions.editPerson.bind(null, index)} />
                     </td>
               
@@ -24,6 +25,14 @@ var PersonList = React.createClass({
         return (
             <div>
                 <Table responsive>
+					<thead>
+						<tr>
+							<th>appCode</th>
+							<th>firstName</th>							
+							<th>birthday</th>							
+							<th>#</th>
+						</tr>
+					</thead>
                     <tbody>
                         {personList}
                     </tbody>

@@ -2,6 +2,8 @@ var _ = require("underscore"),
     PersonConstants = require("../constants/person-constants"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
+var moment = require("moment");
+
 
 var CHANGE_EVENT = 'change';
 var CHANGE_EDIT_EVENT = 'change_edit';
@@ -34,8 +36,15 @@ var _editingIndex = -1;
 function _addPerson(person, callback) {
 
     var instance = {};
-    instance.trackedEntity = "MpkDhZb08jv";
-    instance.orgUnit = "qjoyPJWgSou";
+    //instance.trackedEntity = "MpkDhZb08jv";    
+    instance.trackedEntity = _config.trackedEntityUid;
+    //instance.orgUnit = "qjoyPJWgSou";
+	
+	if(person.OrgUnit == null){
+		alert("OrgUnit must be not null");
+		return;
+	}
+    instance.orgUnit = person.orgUnit.value;
     var attributes = [];
     Object.keys(person).forEach(function(key){
         if(typeof person[key].uid !== "undefined" 
@@ -122,8 +131,8 @@ function _updatePerson(person, callback) {
     enrollData.trackedEntityInstance = person.instance.value;
     enrollData.orgUnit = person.orgUnit.value;
     enrollData.program = _config.programUid;
-    enrollData.enrollmentDate = '2015-12-12';
-    enrollData.incidentDate = '2015-12-12';
+    enrollData.enrollmentDate = moment().format("YYYY-MM-DD");
+    enrollData.incidentDate = moment().format("YYYY-MM-DD");
     
     //enroll to program
     $.ajax({
@@ -260,10 +269,16 @@ AppDispatcher.register(function(payload) {
             break;
         case PersonConstants.ACTION_SEARCH:
             var conditionSearch = "&pageSize=20";
-            if(payload.person != null && payload.person.firstName != "")
-                conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + payload.person.firstName;
+            if(payload.person != null  ){
+				if(payload.person.firstName != "")
+					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + payload.person.firstName;  
+				if(payload.person.orgUnitUid != "")
+					conditionSearch += "&ou=" + payload.person.orgUnitUid;
+			
+			}
+         
 
-            $.get(_queryURL_api + "trackedEntityInstances.json?ou=qjoyPJWgSou&" + conditionSearch, function (json){
+            $.get(_queryURL_api + "trackedEntityInstances.json?" + conditionSearch, function (json){
                 //paging    //-------start paging----------------
                 
                 var rows = json.trackedEntityInstances;
@@ -290,7 +305,6 @@ AppDispatcher.register(function(payload) {
                     _persons.push(person);
                 });
 
-                //_persons = [{firstName: 'Nguyen Quoc Hùng', country: {label:'Việt Nam', value: 'vn'}}, {firstName: 'Nguyen Thi Thúy Hằng',country: {label:'Việt Nam', value: 'vn'}}];
                 PersonStore.emitChange();  
                 //console.log(json.username);
             });
