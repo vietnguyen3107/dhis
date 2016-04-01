@@ -1,17 +1,15 @@
 var _ = require("underscore"),
-    PersonConstants = require("../constants/person-constants"),
-    LicenseConstants = require("../constants/license-constants"),
+    RecensionConstants = require("../constants/recension-constants"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
-var PersonStore = require("../stores/person-store");
 
-var CHANGE_EVENT = 'license_change';
-var CHANGE_EDIT_EVENT = 'license_change_edit';
+var CHANGE_EVENT = 'recension_change';
+var CHANGE_EDIT_EVENT = 'recension_change_edit';
 
-var _personId = "";
-var _editingIndexLicense = -1;
-var _license = {};
+var _editingIndexRecension = -1;
+var _editDetailYN = false;
+var _recensions = [];
 
 // -- 
     var _config = $.parseJSON($.ajax({
@@ -44,46 +42,32 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _searchLicense(index, callback) {
-    var person = PersonStore.getEditingPerson();
+function _searchRecension(recension, callback) {
 
-    var conditionSearch = "pageSize=1";
-    if(person != null && person.instance != ""){
-        _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.licenseStageUid ;
-    }
+	var url = _queryURL_api + "optionSets/" + _config.recensionUid + "?" + _config.optionFieldSearch;
 
-    $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){
-        var rows = json.events;
+    $.get(url, function (xml){
+        var rows = xml.options;
 
         if(typeof rows !== "undefined" && rows.length > 0){
 
             rows.forEach(function(entry) {
                 var _p = {};
-                _p.event = {value:entry.event};
-                _p.status = {value:entry.status};
-                _p.program = {value:entry.program};
-                _p.programStage = {value:entry.programStage};
-                _p.enrollment = {value:entry.enrollment};
-                _p.enrollmentStatus = {value:entry.enrollmentStatus};
-                _p.orgUnit = {value:entry.orgUnit};
-                _p.orgUnitName = {value:entry.orgUnitName};
-                _p.trackedEntityInstance = {value:entry.trackedEntityInstance};
-                _p.eventDate = {value:entry.eventDate};
-                _p.dueDate = {value:entry.dueDate};
-
-
+                _p.uid = {value:entry.id};
+                _p.code = {value:entry.code};
+                _p.name = {value:entry.name};
+                
                 var i =0;
-                if(typeof entry.dataValues !== "undefined" && entry.dataValues.length > 0){
-                    entry.dataValues.forEach(function(attr) {
-
-                        var val = {value: attr.value, uid: attr.dataElement};
-                        _p[attr.dataElement] = val;
+                if(typeof entry.dataValues !== "attributeValues" && entry.attributeValues.length > 0){
+                    entry.attributeValues.forEach(function(attrValue) {
+						var val = {value: attrValue.value, uid: attrValue.attribute.id};
+                        _p[attrValue.attribute.code] = val;
                         i++;
                     });
                 }
+                _recensions.push(_p);
+               
 
-                _license = _p;
             });
         }
 		
@@ -95,25 +79,25 @@ function _searchLicense(index, callback) {
        
 }
 
-function _addLicense(license, callback){
+function _addRecension(recension, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     obj.program = _config.programUid;
     obj.orgUnit = editingPerson.orgUnit.value;
-    obj.programStage = _config.licenseStageUid;
+    obj.programStage = _config.recensionStageUid;
 
     obj.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     obj.eventDate = moment();
     obj.status = "ACTIVE";
 
     var dataValues = [];
-    Object.keys(license).forEach(function(key){
-        if(typeof license[key].uid !== "undefined" ){            
+    Object.keys(recension).forEach(function(key){
+        if(typeof recension[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = license[key].uid;
-            dv.value = license[key].value;
+            dv.dataElement = recension[key].uid;
+            dv.value = recension[key].value;
             dataValues.push(dv); 
         } 
     });
@@ -150,39 +134,40 @@ function _addLicense(license, callback){
 }
 
 
-function _editLicense(index, callback) {
-
+function _editRecension(index, callback) {
+	 _editingIndexRecension = index;
+	 _editDetailYN = false;
+    callback();
 }
 
-function _updateLicense(obj, callback) {
+function _editDetailRecension(index, callback) {
+	 _editingIndexRecension = index;
+	 _editDetailYN = true;
+    callback();
+}
+
+function _updateRecension(obj, callback) {
     
     var o = {};
-    var editingPerson = PersonStore.getEditingPerson();
-
-    o.program = _config.programUid;
-    o.orgUnit = editingPerson.orgUnit.value;
-    o.programStage = _config.licenseStageUid;
-
-    o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
-    o.eventDate = moment();
-    o.status = "ACTIVE";
-
-    var dataValues = [];
+	o.code = obj.code.value;
+	o.name = obj.name.value;
+	
+    var attributeValues = [];
     Object.keys(obj).forEach(function(key){
         if(typeof obj[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = obj[key].uid;
+            dv.attribute = obj[key].uid;
             dv.value = obj[key].value;
-            dataValues.push(dv); 
+            attributeValues.push(dv); 
         } 
     });
     
-    o.dataValues = dataValues;
-
+    o.attributeValues = attributeValues;
+	console.log(o);
     // return false;
     // PUT data
     $.ajax({
-        url: _queryURL_api + 'events/' + obj.event.value,
+        url: _queryURL_api + 'options/' + obj.uid.value,
         type: 'PUT',
         data: JSON.stringify(o),
         contentType: "application/json; charset=utf-8",
@@ -190,7 +175,7 @@ function _updateLicense(obj, callback) {
         traditional: true,
         success: function(response) {
             if(response.response.status == "SUCCESS"){
-				_license = obj;
+				_recension = obj;
 		
                 if (typeof callback === "function") {
                     
@@ -210,14 +195,21 @@ function _updateLicense(obj, callback) {
 }
 
 
-var LicenseStore  = _.extend(EventEmitter.prototype, {
-    getLicense: function() {
-        return _license;
+var RecensionStore  = _.extend(EventEmitter.prototype, {
+    getRecensions: function() {
+        return _recensions;
     },
-    getEditingLicense: function() {
-        return _license;
+	getEditDetailYN: function() {
+        return _editDetailYN;
+    },
+    getEditingRecension: function() {
+        if (_editingIndexRecension < 0) {
+            return null;
+        }
+        return jQuery.extend(true, {}, _recensions[_editingIndexRecension]);
 
     },
+
     emitChange: function() {
         this.emit(CHANGE_EVENT);
     },
@@ -235,46 +227,49 @@ var LicenseStore  = _.extend(EventEmitter.prototype, {
 
 AppDispatcher.register(function(payload) {
     switch (payload.action) {
-        //PERSON
-        case PersonConstants.ACTION_EDIT:
-			_license = null; 
-            
-			
-            _searchLicense(payload.index,function(){
-                LicenseStore.emitChange();
-				LicenseStore.emitEdit();
-            });
-            break;
 
-        case PersonConstants.ACTION_CLEAR:
-            _personId = "";
-            _license = null; 
-           
-            LicenseStore.emitChange();  
-            LicenseStore.emitEdit();
+
+        case RecensionConstants.ACTION_SEARCH:
+           _editingIndexRecension = -1; 
+            RecensionStore.emitEdit();
+			
+            _searchRecension(payload.recension, function(){
+                RecensionStore.emitChange();
+            });
             break;
         
 
-        //license
-        case LicenseConstants.ACTION_ADD:
-            _addLicense(payload.license,function(){
-				_searchLicense(0,function(){
-					LicenseStore.emitChange();
-					LicenseStore.emitEdit();
+        //recension
+        case RecensionConstants.ACTION_ADD:
+            _addRecension(payload.recension,function(){
+				_searchRecension({},function(){
+					RecensionStore.emitChange();
+					RecensionStore.emitEdit();
 				});
             });
             break;
-        case LicenseConstants.ACTION_EDIT:
-            _editLicense(payload.index,function(){
-                LicenseStore.emitEdit();
+        case RecensionConstants.ACTION_EDIT:
+            _editRecension(payload.index,function(){
+                RecensionStore.emitEdit();
             });
             break;
-        case LicenseConstants.ACTION_UPDATE:
-            _updateLicense(payload.obj,function(){
-                LicenseStore.emitChange();
+        case RecensionConstants.ACTION_EDIT_DETAIL:
+            _editDetailRecension(payload.index,function(){
+                RecensionStore.emitEdit();
+            });
+            break;
+        case RecensionConstants.ACTION_CLOSE_DETAIL:
+				_editDetailYN = false;
+				_editingIndexRecension = -1; 
+                RecensionStore.emitEdit();
+            
+            break;
+        case RecensionConstants.ACTION_UPDATE:
+            _updateRecension(payload.obj,function(){
+                RecensionStore.emitChange();
             });
             break;
     }
 });
 
-module.exports = LicenseStore;
+module.exports = RecensionStore;

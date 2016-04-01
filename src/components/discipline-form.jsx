@@ -11,6 +11,13 @@ var moment = require("moment");
 var DisciplineStore = require("../stores/discipline-store");
 var DisciplineActions = require("../actions/discipline-actions");
 
+
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
 var DisciplineForm = React.createClass({
     _onClickAdd: function() {        
         DisciplineActions.addDiscipline(this.state.editingDiscipline);
@@ -116,7 +123,7 @@ var DisciplineForm = React.createClass({
         });
         
         //disciplinaryTypes
-        $.get("../../../../dhis/api/optionSets/mWgYX8VYkAJ", function (xml){
+        $.get("../../../../dhis/api/optionSets/mWgYX8VYkAJ?" + _config.optionFieldSearch, function (xml){
             
             var disciplinaryTypes = [];
             var options = xml.options;        

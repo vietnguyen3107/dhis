@@ -36,7 +36,11 @@ var _experiences = [];
     var _queryURL_api = _dhisSiteURL + 'api/';
 
 function lowercaseFirstLetter(s) {
-    return s.charAt(0).toLowerCase() + s.slice(1);
+   if(typeof s  !== "undefined")
+		return s.charAt(0).toLowerCase() + s.slice(1);
+	else{
+		return s;
+	}
 }
 
 

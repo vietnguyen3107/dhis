@@ -7,6 +7,13 @@ var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
 var SimpleSelect = require('react-select');
 
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
+	
 var PersonFormSearch = React.createClass({
     _onClickSearch: function() {
 		this.setState({
@@ -44,7 +51,7 @@ var PersonFormSearch = React.createClass({
 	    
     getInitialState: function() {
         return {
-            nameSearch: "1900",
+            nameSearch: "test",
 			isLoading: false,
 			orgUnits: [],
 			orgUnitUid : "",
@@ -69,7 +76,7 @@ var PersonFormSearch = React.createClass({
 		if(self.state.me == null || self.state.me.id != props.me.id){
 			console.log("willreceive");
 			//orgUnits
-			$.get("../../../../dhis/api/organisationUnits/" + props.me.organisationUnits[0].id, function (xml){
+			$.get("../../../../dhis/api/organisationUnits/" + props.me.organisationUnits[0].id + "?" + _config.orgUnitFieldSearch, function (xml){
 				
 				var orgUnits = [];
 				{			

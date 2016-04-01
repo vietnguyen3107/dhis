@@ -194,7 +194,11 @@ function _searchPerson(person) {
 }
 
 function lowercaseFirstLetter(s) {
-    return s.charAt(0).toLowerCase() + s.slice(1);
+    if(typeof s  !== "undefined")
+		return s.charAt(0).toLowerCase() + s.slice(1);
+	else{
+		return s;
+	}
 }
 
 // var base_url = "http://apps.dhis2.org/demo/";
@@ -274,7 +278,7 @@ AppDispatcher.register(function(payload) {
 					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + payload.person.firstName;  
 				if(payload.person.orgUnitUid != "")
 					conditionSearch += "&ou=" + payload.person.orgUnitUid;
-			
+				
 			}
          
 

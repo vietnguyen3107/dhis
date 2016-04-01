@@ -10,14 +10,13 @@ var I18n = require("i18n-js");
 var EducationPanel = require("./education-panel");
 var ExperiencePanel = require("./experience-panel");
 var DisciplinePanel = require("./discipline-panel");
-var LicensePanel = require("./license-panel");
-var ResultPanel = require("./result-panel");
+
 
 
 var Tabs = require("react-bootstrap").Tabs;
 var Tab = require("react-bootstrap").Tab;
 
-var Main = React.createClass({
+var ReceptionMain = React.createClass({
     _onChange: function() {
         this.setState({
             persons: PersonStore.getPersons(),
@@ -62,9 +61,9 @@ var Main = React.createClass({
 				    </div>
 				    <div>
 				      <ul className="nav navbar-nav">
-				        <li><a href="index.html">RECEPTION</a></li>
-				        <li className="active"><a href="#">HANDLING</a></li>
-				        <li><a href="recension.html">RECENSION</a></li>
+				        <li className="active"><a href="#">RECEPTION</a></li>
+				        <li><a href="handling.html">HANDLING</a></li>
+				         <li><a href="recension.html">RECENSION</a></li>
 				        <li><a href="#">HELP</a></li>
 				      </ul>
 				    </div>
@@ -124,21 +123,7 @@ var Main = React.createClass({
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={5} title="LICENSE">
-						    	<div className="panel-body">
-										<div>											
-						    				<LicensePanel />
-										</div>
-								</div>
-						    </Tab>
-						    <Tab eventKey={6} title="RESULT">
-						    	<div className="panel-body">
-										<div>											
-						    				<ResultPanel />
-										</div>
-								</div>
-						    </Tab>
-						    
+						  
 						</Tabs>
 					
 				</div>
@@ -155,4 +140,4 @@ var Main = React.createClass({
 });
 
 
-module.exports = Main;
+module.exports = ReceptionMain;

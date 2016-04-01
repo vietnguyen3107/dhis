@@ -10,6 +10,12 @@ var moment = require("moment");
 
 
 
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
 var PersonForm = React.createClass({
     _onClickAdd: function() {
         PersonActions.addPerson({fullName: this.state.fullName});
@@ -62,7 +68,7 @@ var PersonForm = React.createClass({
             delete self.req;
         });
         //applicationType
-        $.get("../dhis/api/optionSets/FQS1S2NwFyC", function (xml){
+        $.get("../dhis/api/optionSets/FQS1S2NwFyC?" + _config.optionFieldSearch, function (xml){
             
             var applicationTypes = [];
             var options = xml.options;        
@@ -81,7 +87,7 @@ var PersonForm = React.createClass({
             
         });
         //disciplines
-        $.get("../dhis/api/optionSets/vLyLsFHBomG", function (xml){
+        $.get("../dhis/api/optionSets/vLyLsFHBomG?" + _config.optionFieldSearch, function (xml){
             
             var disciplines = [];
             var options = xml.options;        

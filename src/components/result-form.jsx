@@ -11,6 +11,12 @@ var moment = require("moment");
 var ResultStore = require("../stores/result-store");
 var ResultActions = require("../actions/result-actions");
 
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
 var ResultForm = React.createClass({
     _onClickAdd: function() {        
         ResultActions.addResult(this.state.editingResult);
@@ -116,7 +122,7 @@ var ResultForm = React.createClass({
         });
         
         //result
-        $.get("../../../../dhis/api/optionSets/W5W7CTTirnl", function (xml){
+        $.get("../../../../dhis/api/optionSets/W5W7CTTirnl?" + _config.optionFieldSearch, function (xml){
             
             var results = [];
             var options = xml.options;        
@@ -134,7 +140,7 @@ var ResultForm = React.createClass({
         });
         //licenseScopes
 		/*
-        $.get("../../../../dhis/api/optionSets/vnIZVLtjPgT", function (xml){
+        $.get("../../../../dhis/api/optionSets/vnIZVLtjPgT?" + _config.optionFieldSearch, function (xml){
             
             var licenseScopes = [];
             var options = xml.options;        

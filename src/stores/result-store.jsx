@@ -36,7 +36,11 @@ var _result = {};
     var _queryURL_api = _dhisSiteURL + 'api/';
 
 function lowercaseFirstLetter(s) {
-    return s.charAt(0).toLowerCase() + s.slice(1);
+    if(typeof s  !== "undefined")
+		return s.charAt(0).toLowerCase() + s.slice(1);
+	else{
+		return s;
+	}
 }
 
 
@@ -46,7 +50,7 @@ function _searchResult(index, callback) {
     var conditionSearch = "pageSize=1";
     if(person != null && person.instance != ""){
         _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.resultStageUid + "&programStatus=ACTIVE";
+        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.resultStageUid ;
     }
 
     $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){

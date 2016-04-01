@@ -11,6 +11,14 @@ var moment = require("moment");
 var EducationStore = require("../stores/education-store");
 var EducationActions = require("../actions/education-actions");
 
+
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
+	
 var EducationForm = React.createClass({
     _onClickAdd: function() {        
         EducationActions.addEducation(this.state.editingEducation);
@@ -121,7 +129,7 @@ var EducationForm = React.createClass({
         });
         
         //degree
-        $.get("../../../../dhis/api/optionSets/ZOsC9S87ap9", function (xml){
+        $.get("../../../../dhis/api/optionSets/ZOsC9S87ap9?" + _config.optionFieldSearch, function (xml){
             
             var degrees = [];
             var options = xml.options;        
@@ -138,7 +146,7 @@ var EducationForm = React.createClass({
             
         });
         //form
-        $.get("../../../../dhis/api/optionSets/mu6CoLtljh2", function (xml){
+        $.get("../../../../dhis/api/optionSets/mu6CoLtljh2?" + _config.optionFieldSearch, function (xml){
             
             var forms = [];
             var options = xml.options;        

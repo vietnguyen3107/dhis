@@ -11,6 +11,14 @@ var moment = require("moment");
 var ExperienceStore = require("../stores/experience-store");
 var ExperienceActions = require("../actions/experience-actions");
 
+
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
+	
 var ExperienceForm = React.createClass({
     _onClickAdd: function() {        
         ExperienceActions.addExperience(this.state.editingExperience);
@@ -123,7 +131,7 @@ var ExperienceForm = React.createClass({
         });
         
         //experienceTimes
-        $.get("../../../../dhis/api/optionSets/Zd5o5eYGLYM", function (xml){
+        $.get("../../../../dhis/api/optionSets/Zd5o5eYGLYM?" + _config.optionFieldSearch, function (xml){
             
             var experienceTimes = [];
             var options = xml.options;        
@@ -140,7 +148,7 @@ var ExperienceForm = React.createClass({
             
         });
         //hospitalTypes
-        $.get("../../../../dhis/api/optionSets/JMELgYjQc56", function (xml){
+        $.get("../../../../dhis/api/optionSets/JMELgYjQc56?" + _config.optionFieldSearch, function (xml){
             
             var hospitalTypes = [];
             var options = xml.options;        
@@ -158,7 +166,7 @@ var ExperienceForm = React.createClass({
             
         });
         //standardHospitals
-        $.get("../../../../dhis/api/optionSets/MJZjKc5go2h", function (xml){
+        $.get("../../../../dhis/api/optionSets/MJZjKc5go2h?" + _config.optionFieldSearch, function (xml){
             
             var standardHospitals = [];
             var options = xml.options;        

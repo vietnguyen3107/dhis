@@ -11,6 +11,12 @@ var moment = require("moment");
 var LicenseStore = require("../stores/license-store");
 var LicenseActions = require("../actions/license-actions");
 
+    var _config = $.parseJSON($.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./data/config.json",
+        async: false
+    }).responseText);
 var LicenseForm = React.createClass({
     _onClickAdd: function() {        
         LicenseActions.addLicense(this.state.editingLicense);
@@ -116,7 +122,7 @@ var LicenseForm = React.createClass({
         });
         
         //licensestatus
-        $.get("../../../../dhis/api/optionSets/jmzS0ebdZ5R", function (xml){
+        $.get("../../../../dhis/api/optionSets/jmzS0ebdZ5R?" + _config.optionFieldSearch, function (xml){
             
             var licenseStatuses = [];
             var options = xml.options;        
