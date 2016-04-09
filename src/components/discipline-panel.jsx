@@ -14,10 +14,11 @@ var moment = require("moment");
 var DisciplinePanel = React.createClass({
     
     _onChange: function() {
-		
-        this.setState({
-            disciplines: DisciplineStore.getDisciplines(),
-        });
+		if (this.isMounted()) {
+			this.setState({
+				disciplines: DisciplineStore.getDisciplines(),
+			});
+		}
 		
 		console.log(this.state.disciplines);
     },

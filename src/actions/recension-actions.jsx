@@ -32,10 +32,11 @@ var RecensionActions = {
             recension: recension,
         })
     },
-    editDetailRecension: function(index) {
+    editDetailRecension: function(index, person) {
         AppDispatcher.dispatch({
             action: RecensionConstants.ACTION_EDIT_DETAIL,
             index: index,
+			person: person
         })
     },
     closeDetailRecension: function() {

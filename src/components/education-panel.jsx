@@ -14,9 +14,11 @@ var moment = require("moment");
 var EducationPanel = React.createClass({
     
     _onChange: function() {
-        this.setState({
-            educations: EducationStore.getEducations(),
-        })
+		if (this.isMounted()) {
+			this.setState({
+				educations: EducationStore.getEducations(),
+			})
+		}
     },
     getInitialState: function() {
         return {

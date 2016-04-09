@@ -85,16 +85,18 @@ var DisciplineForm = React.createClass({
     _onEdit: function() {
         var editingDiscipline = DisciplineStore.getEditingDiscipline();
 
-        if(editingDiscipline && editingDiscipline.event ){
-            this.setState({
-                editingDiscipline: editingDiscipline,
-                editingDisciplineUid: editingDiscipline.event.value
-            });
-        }else{
-            this.setState({
-                editingDisciplineUid: null,
-                editingDiscipline: null,
-            });
+		if (this.isMounted()) {
+			if(editingDiscipline && editingDiscipline.event ){
+				this.setState({
+					editingDiscipline: editingDiscipline,
+					editingDisciplineUid: editingDiscipline.event.value
+				});
+			}else{
+				this.setState({
+					editingDisciplineUid: null,
+					editingDiscipline: null,
+				});
+			}
         }
     },
     getInitialState: function() {

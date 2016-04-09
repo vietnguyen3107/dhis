@@ -85,17 +85,18 @@ var ResultForm = React.createClass({
 		
 		var editingResult = ResultStore.getEditingResult();
 
-
-        if(editingResult && editingResult.event ){
-            this.setState({
-                editingResult: editingResult,
-                editingResultUid: editingResult.event.value
-            });
-        }else{
-            this.setState({
-                editingResultUid: null,
-                editingResult: null,
-            });
+		if (this.isMounted()) {
+			if(editingResult && editingResult.event ){
+				this.setState({
+					editingResult: editingResult,
+					editingResultUid: editingResult.event.value
+				});
+			}else{
+				this.setState({
+					editingResultUid: null,
+					editingResult: null,
+				});
+			}
         }
     },
     getInitialState: function() {

@@ -93,17 +93,19 @@ var ExperienceForm = React.createClass({
     _onEdit: function() {
         var editingExperience = ExperienceStore.getEditingExperience();
 
-        if(editingExperience && editingExperience.event ){
-            this.setState({
-                editingExperience: editingExperience,
-                editingExperienceUid: editingExperience.event.value
-            });
-        }else{
-            this.setState({
-                editingExperienceUid: null,
-                editingExperience: null,
-            });
-        }
+		if (this.isMounted()) {
+			if(editingExperience && editingExperience.event ){
+				this.setState({
+					editingExperience: editingExperience,
+					editingExperienceUid: editingExperience.event.value
+				});
+			}else{
+				this.setState({
+					editingExperienceUid: null,
+					editingExperience: null,
+				});
+			}
+		}
     },
     getInitialState: function() {
         return {

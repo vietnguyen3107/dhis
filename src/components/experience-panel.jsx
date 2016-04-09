@@ -14,9 +14,11 @@ var moment = require("moment");
 var ExperiencePanel = React.createClass({
     
     _onChange: function() {
-        this.setState({
-            experiences: ExperienceStore.getExperiences(),
-        })
+		if (this.isMounted()) {
+			this.setState({
+				experiences: ExperienceStore.getExperiences(),
+			})
+		}
     },
     getInitialState: function() {
         return {

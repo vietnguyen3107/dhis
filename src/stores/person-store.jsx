@@ -3,12 +3,13 @@ var _ = require("underscore"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
+var RecensionConstants = require("../constants/recension-constants");
 
-
-var CHANGE_EVENT = 'change';
-var CHANGE_EDIT_EVENT = 'change_edit';
+var CHANGE_EVENT = 'person_change';
+var CHANGE_EDIT_EVENT = 'person_change_edit';
 
 var _persons = [];
+var _personByRecensions = [];
 var _editingIndex = -1;
 
 
@@ -147,7 +148,7 @@ function _updatePerson(person, callback) {
             
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            alert(xhr.status + ":" + thrownError + ajaxOptions);
+            console.log(xhr.status + ":" + thrownError + ajaxOptions);
         }
     });
 
@@ -174,23 +175,86 @@ function _updatePerson(person, callback) {
     });
 }
 
-function _searchPerson(person) {
-    console.log('search...' + person.firstName);
-    // var toremove= new Array(); 
-    // _persons.map(function(stu, index) {
-        
-    //     if ( stu.name.toUpperCase().lastIndexOf(person.name.toUpperCase()) < 0 ) {
-    //         toremove.push(stu);
-    //     }
-    // });
-    // if ( toremove != null ) {
-    //     for ( t = 0; t < toremove.length; t++ ) {
-    //         console.log( toremove[t].name + " is index " +_persons.indexOf(toremove[t]));
-    //         _persons.splice(_persons.indexOf(toremove[t]), 1);
-    //     }
-    // }
+function _searchPerson(person, callback) {
+    var conditionSearch = "&pageSize=20";
+            if(person != null  ){
+				if(person.firstName != "")
+					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + person.firstName;  
+				if(person.orgUnitUid != "")
+					conditionSearch += "&ou=" + person.orgUnitUid;
+				
+			}
+         
 
-    _persons = [];
+            $.get(_queryURL_api + "trackedEntityInstances.json?" + conditionSearch, function (json){
+                //paging    //-------start paging----------------
+                
+                var rows = json.trackedEntityInstances;
+                _persons.splice(0, _persons.length);
+
+                rows.forEach(function(entry) {
+                    var person = {};
+                    person.orgUnit = {value:entry.orgUnit};
+                    person.instance = {value:entry.trackedEntityInstance};
+                    person.trackedEntityInstance = {value:entry.trackedEntityInstance};
+                    person.trackedEntity = {value:entry.trackedEntity};
+
+                    person.applicationFileId = {value:entry.trackedEntityInstance};
+                    person.created = {value:entry.created};
+                    var i =0;
+                    entry.attributes.forEach(function(attr) {
+
+                        var val = {value: attr.value, uid: attr.attribute};
+                        person[lowercaseFirstLetter(attr.code)] = val;
+                        i++;
+                    });
+
+
+                    _persons.push(person);
+                });
+				callback();
+			});
+}
+
+function _searchPersonByRecension(person, callback) {
+    var conditionSearch = "&pageSize=20";
+            if(person != null  ){
+				if(person.firstName != "")
+					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + person.firstName;  
+				if(person.orgUnitUid != "")
+					conditionSearch += "&ou=" + person.orgUnitUid;
+				
+			}
+         
+
+            $.get(_queryURL_api + "trackedEntityInstances.json?" + conditionSearch, function (json){
+                //paging    //-------start paging----------------
+                
+                var rows = json.trackedEntityInstances;
+                _personByRecensions.splice(0, _personByRecensions.length);
+
+                rows.forEach(function(entry) {
+                    var person = {};
+                    person.orgUnit = {value:entry.orgUnit};
+                    person.instance = {value:entry.trackedEntityInstance};
+                    person.trackedEntityInstance = {value:entry.trackedEntityInstance};
+                    person.trackedEntity = {value:entry.trackedEntity};
+
+                    person.applicationFileId = {value:entry.trackedEntityInstance};
+                    person.created = {value:entry.created};
+                    var i =0;
+                    entry.attributes.forEach(function(attr) {
+
+                        var val = {value: attr.value, uid: attr.attribute};
+                        person[lowercaseFirstLetter(attr.code)] = val;
+                        i++;
+                    });
+
+
+                    _personByRecensions.push(person);
+                });
+				callback();
+			});
 }
 
 function lowercaseFirstLetter(s) {
@@ -224,6 +288,10 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
     getPersons: function() {
         return _persons;
     },
+	getPersonByRecensions: function() {
+        return _personByRecensions;
+    },
+	
     emitChange: function() {
         this.emit(CHANGE_EVENT);
     },
@@ -239,6 +307,7 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
         // return _persons[_editingIndex];
     },
     emitEditPerson: function(callback) {
+
         this.emit(CHANGE_EDIT_EVENT, callback);
     },
     addEditPersonListener: function(callback) {
@@ -272,50 +341,17 @@ AppDispatcher.register(function(payload) {
             
             break;
         case PersonConstants.ACTION_SEARCH:
-            var conditionSearch = "&pageSize=20";
-            if(payload.person != null  ){
-				if(payload.person.firstName != "")
-					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + payload.person.firstName;  
-				if(payload.person.orgUnitUid != "")
-					conditionSearch += "&ou=" + payload.person.orgUnitUid;
-				
-			}
-         
-
-            $.get(_queryURL_api + "trackedEntityInstances.json?" + conditionSearch, function (json){
-                //paging    //-------start paging----------------
-                
-                var rows = json.trackedEntityInstances;
-                _persons.splice(0, _persons.length);
-
-                rows.forEach(function(entry) {
-                    var person = {};
-                    person.orgUnit = {value:entry.orgUnit};
-                    person.instance = {value:entry.trackedEntityInstance};
-                    person.trackedEntityInstance = {value:entry.trackedEntityInstance};
-                    person.trackedEntity = {value:entry.trackedEntity};
-
-                    person.applicationFileId = {value:entry.trackedEntityInstance};
-                    person.created = {value:entry.created};
-                    var i =0;
-                    entry.attributes.forEach(function(attr) {
-
-                        var val = {value: attr.value, uid: attr.attribute};
-                        person[lowercaseFirstLetter(attr.code)] = val;
-                        i++;
-                    });
-
-
-                    _persons.push(person);
-                });
-
-                PersonStore.emitChange();  
-                //console.log(json.username);
-            });
-
-
-            
+			_searchPerson(payload.person, function(){PersonStore.emitChange();  });
             break;
+		
+        case PersonConstants.ACTION_SEARCH_BY_RECENSION:
+			_searchPerson(payload.person, function(){PersonStore.emitChange();  });
+            break;
+		
+        case RecensionConstants.ACTION_EDIT_DETAIL:
+			_searchPersonByRecension(payload.person, function(){PersonStore.emitChange();  });
+            break;
+		
     }
 });
 

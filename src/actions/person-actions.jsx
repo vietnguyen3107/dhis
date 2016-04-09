@@ -32,6 +32,12 @@ var PersonActions = {
             person: person,
         })
     },
+    searchPersonByRecension: function(person) {
+        AppDispatcher.dispatch({
+            action: PersonConstants.ACTION_SEARCH_BY_RECENSION,
+            person: person,
+        })
+    },
     clearPerson: function() {
         AppDispatcher.dispatch({
             action: PersonConstants.ACTION_CLEAR

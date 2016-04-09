@@ -93,16 +93,18 @@ var EducationForm = React.createClass({
     _onEdit: function() {
         var editingEducation = EducationStore.getEditingEducation();
 
-        if(editingEducation && editingEducation.event ){
-            this.setState({
-                editingEducation: editingEducation,
-                editingEducationUid: editingEducation.event.value
-            });
-        }else{
-            this.setState({
-                editingEducationUid: null,
-                editingEducation: null,
-            });
+		if (this.isMounted()) {
+			if(editingEducation && editingEducation.event ){
+				this.setState({
+					editingEducation: editingEducation,
+					editingEducationUid: editingEducation.event.value
+				});
+			}else{
+				this.setState({
+					editingEducationUid: null,
+					editingEducation: null,
+				});
+			}
         }
     },
     getInitialState: function() {

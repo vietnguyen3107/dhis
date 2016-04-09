@@ -39,7 +39,7 @@ var RecensionList = React.createClass({
                             <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}>Edit</Button>
                         </td>
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index)}>Detail</Button>
+                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, {firstName: 'test', orgUnitUid: 'zmqii2FMVkS'})}>Detail</Button>
                         </td>
 
                     </tr>

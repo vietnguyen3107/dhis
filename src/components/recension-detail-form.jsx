@@ -6,9 +6,18 @@ var DatePicker = require("react-datepicker");
 var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
 var Label = require("react-bootstrap").Label;
+
+
+var Tabs = require("react-bootstrap").Tabs;
+var Tab = require("react-bootstrap").Tab;
+var Modal = require("react-bootstrap").Modal;
+
 var moment = require("moment");
-var PersonList = require("./person-list"),
+
+var PersonList = require("./recension-person-list"),
     PersonActions = require("../actions/person-actions"),
+	
+    PersonSearchPanel = require("./person-search-panel"),
     PersonStore = require("../stores/person-store");
 
 
@@ -31,7 +40,7 @@ var RecensionDetailForm = React.createClass({
 				
                 editingRecension: editingRecension,
                 editingRecensionUid: editingRecension.uid.value,
-				persons: PersonStore.getPersons()
+				persons: PersonStore.getPersonByRecensions()
             });
 			
         }else{
@@ -46,13 +55,32 @@ var RecensionDetailForm = React.createClass({
 	_onClickClose: function() {        
         RecensionActions.closeDetailRecension();
     },
+	
+	_onClickAddForm(){
+		
+		this.setState({ addPersonFormShow: true});
+	},
+	_onEnterModal(){
+		
+	},
+	_onCloseModal(){
+		this.setState({ addPersonFormShow: false});
+	},
+	
+	_onChildChanged: function(newState) {
+
+        this.setState({ orgUnitUid: newState.orgUnitUid });
+    },
     getInitialState: function() {
-		PersonActions.searchPerson({firstName: 'test', orgUnitUid: 'zmqii2FMVkS'});
+		//PersonActions.searchPerson({firstName: 'test', orgUnitUid: 'zmqii2FMVkS'});
         return {
             hide: {display:'none'},
+			addPersonFormShow: false,
             editingRecension: null,
             editingRecensionUid : null,
-			persons : []
+			persons : [],
+			me: [],
+			orgUnitUid: ""
         }
     },
 	componentWillUpdate: function(prevProps, prevState){
@@ -65,6 +93,16 @@ var RecensionDetailForm = React.createClass({
     // component-will-mount :: a -> Void
     componentWillMount: function(){
         var self = this;
+        //me
+        $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
+            self.setState({
+				me: json,
+				orgUnitUid: json.organisationUnits[0].id
+			
+			});
+            
+            
+        });
     },
     render: function() {
         var self = this;
@@ -72,7 +110,7 @@ var RecensionDetailForm = React.createClass({
         var btnUpdate = (<Button bsStyle="success"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
         
         return (
-            <form className="form" style={self.props.showStatus != "detail" ?  self.state.hide  : {}}>
+            <div style={self.props.showStatus != "detail" ?  self.state.hide  : {}}>
             <div className="row">
 
                 <div className="col-md-4 form-group-sm">
@@ -193,6 +231,9 @@ var RecensionDetailForm = React.createClass({
             <div className="row">
                 <div className="col-md-12">
                     
+                    <div  className="pull-left">
+                    <Button bsStyle="default" onClick={self._onClickAddForm}>Add Person</Button>
+                    </div>
                     <div  className="pull-right">
                     <Button bsStyle="default" onClick={self._onClickClose}>Close</Button>
                     </div>
@@ -200,11 +241,24 @@ var RecensionDetailForm = React.createClass({
             </div>
 			<div className="row">
 				<div className="col-md-12">
-					<PersonList persons={this.state.persons}  />
+					<PersonList persons={self.state.persons}  />
 				</div>
 			</div>
+			<div className="row">
+				<Modal  bsSize="large" show={self.state.addPersonFormShow} container={self} aria-labelledby="contained-modal-title" onHide={self._onCloseModal}  onEntered={self._onEnterModal} >
+				  <Modal.Header  closeButton>
+					<Modal.Title id="contained-modal-title">Add Person Modal</Modal.Title>
+				  </Modal.Header >
+				  <Modal.Body>
+						<PersonSearchPanel />
+				  </Modal.Body>
+				  <Modal.Footer>
+					<Button onClick={self._onCloseModal}>Close</Button>
+				  </Modal.Footer>
+				</Modal>
+			</div>
 
-            </form>
+            </div>
         );
     }
 });

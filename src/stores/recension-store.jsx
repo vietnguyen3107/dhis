@@ -3,7 +3,8 @@ var _ = require("underscore"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
-
+var PersonStore = require("../stores/person-store");
+var PersonActions = require("../actions/person-actions");
 var CHANGE_EVENT = 'recension_change';
 var CHANGE_EDIT_EVENT = 'recension_change_edit';
 
@@ -143,6 +144,7 @@ function _editRecension(index, callback) {
 function _editDetailRecension(index, callback) {
 	 _editingIndexRecension = index;
 	 _editDetailYN = true;
+
     callback();
 }
 
@@ -224,6 +226,8 @@ var RecensionStore  = _.extend(EventEmitter.prototype, {
         this.on(CHANGE_EDIT_EVENT, callback);
     },
 });
+
+RecensionStore.setMaxListeners(0);
 
 AppDispatcher.register(function(payload) {
     switch (payload.action) {

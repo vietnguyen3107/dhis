@@ -36,10 +36,12 @@ var PersonFormSearch = React.createClass({
 		}
     },
 	_onChange: function(e) {
-		//alert(this.props.me.organisationUnits[0].id);
+		
+		if (this.isMounted()) {
 		this.setState({
             isLoading: false
         });
+		}
     },
 	_onOrgUnitChange: function(val, e){
 		//alert(this.props.me.organisationUnits[0].id);

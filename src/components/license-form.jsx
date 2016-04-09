@@ -85,18 +85,19 @@ var LicenseForm = React.createClass({
 		
 		var editingLicense = LicenseStore.getEditingLicense();
 
-
-        if(editingLicense && editingLicense.event ){
-            this.setState({
-                editingLicense: editingLicense,
-                editingLicenseUid: editingLicense.event.value
-            });
-        }else{
-            this.setState({
-                editingLicenseUid: null,
-                editingLicense: null,
-            });
-        }
+		if (this.isMounted()) {
+			if(editingLicense && editingLicense.event ){
+				this.setState({
+					editingLicense: editingLicense,
+					editingLicenseUid: editingLicense.event.value
+				});
+			}else{
+				this.setState({
+					editingLicenseUid: null,
+					editingLicense: null,
+				});
+			}
+		}
     },
     getInitialState: function() {
         return {

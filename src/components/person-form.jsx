@@ -130,11 +130,12 @@ var PersonForm = React.createClass({
     },
     _onEdit: function() {
         var editingPerson = PersonStore.getEditingPerson();
-
+		if (this.isMounted()) {
         this.setState({
             editingPerson: editingPerson,
             editingPersonUid: editingPerson.instance.value
         });
+		}
     },
     getInitialState: function() {
         return {
@@ -205,6 +206,9 @@ var PersonForm = React.createClass({
             }
         );
     },
+	componentWillUnmount: function(){
+		console.log("test unmoiunt");
+	},
     render: function() {
         var self = this;
         var btnAdd = (<Button bsStyle="success" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );

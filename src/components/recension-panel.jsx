@@ -5,11 +5,11 @@ var RecensionList = require("./recension-list");
 var RecensionStore = require("../stores/recension-store");
 
 
-
 var SimpleSelect = require('react-select');
 var DatePicker = require("react-datepicker");
 var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
+var Panel = require("react-bootstrap").Panel;
 var moment = require("moment");
 var RecensionActions = require("../actions/recension-actions");
 
@@ -50,7 +50,8 @@ var RecensionPanel = React.createClass({
                 <div className='col-sm-12'>
 					<div className="row">
                         <div className='col-md-12'>
-                            <RecensionDetailForm showStatus={this.state.showStatus}/>
+						   <RecensionDetailForm showStatus={this.state.showStatus}/>
+						
                         </div>
                     </div>
 				</div>
