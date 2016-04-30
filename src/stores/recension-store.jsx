@@ -61,7 +61,7 @@ function _searchRecension(recension, callback) {
                 var i =0;
                 if(typeof entry.dataValues !== "attributeValues" && entry.attributeValues.length > 0){
                     entry.attributeValues.forEach(function(attrValue) {
-						var val = {value: attrValue.value, uid: attrValue.attribute.id};
+						var val = {value: attrValue.value, uid: attrValue.attribute.id, code: attrValue.attribute.code};
                         _p[attrValue.attribute.code] = val;
                         i++;
                     });
@@ -80,50 +80,45 @@ function _searchRecension(recension, callback) {
        
 }
 
-function _addRecension(recension, callback){
-
-    var obj = {};
-    var editingPerson = PersonStore.getEditingPerson();
-
-    obj.program = _config.programUid;
-    obj.orgUnit = editingPerson.orgUnit.value;
-    obj.programStage = _config.recensionStageUid;
-
-    obj.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
-    obj.eventDate = moment();
-    obj.status = "ACTIVE";
-
-    var dataValues = [];
-    Object.keys(recension).forEach(function(key){
-        if(typeof recension[key].uid !== "undefined" ){            
+function _addRecension(obj, callback){
+    var o = {};
+	o.code = obj.code.value;
+	o.name = obj.name.value;
+	o.optionSet = _config.recensionUid;
+	
+    var attributeValues = [];
+    Object.keys(obj).forEach(function(key){
+        if(typeof obj[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = recension[key].uid;
-            dv.value = recension[key].value;
-            dataValues.push(dv); 
+            dv.attribute = {id: obj[key].uid};
+            dv.value = obj[key].value;
+            attributeValues.push(dv); 
         } 
     });
     
-    obj.dataValues = dataValues;
-
+    o.attributeValues = attributeValues;
+	console.log(o);
     // return false;
-    // PUT data
+    // POST data
     $.ajax({
-        url: _queryURL_api + 'events/',
+        url: _queryURL_api + 'options/',
         type: 'POST',
-        data: JSON.stringify(obj ),
+        data: JSON.stringify(o),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         traditional: true,
         success: function(response) {
-            if(response.response.importSummaries[0].status == "SUCCESS"){
-                obj.event = {value: response.reference};
+            if(response.response.status == "SUCCESS"){
+				obj.uid = {value:response.response.lastImported};
+				_recensions.push(obj);
+		
                 if (typeof callback === "function") {
                     
                     callback();
                 }
 
             }else{
-                alert(response.response.importSummaries[0].description);
+                alert(response.response.status);
 
             }
         },
@@ -131,7 +126,6 @@ function _addRecension(recension, callback){
             alert(xhr.status + ":" + thrownError + ajaxOptions);
         }
     });
-
 }
 
 
@@ -158,7 +152,7 @@ function _updateRecension(obj, callback) {
     Object.keys(obj).forEach(function(key){
         if(typeof obj[key].uid !== "undefined" ){            
             var dv = {};
-            dv.attribute = obj[key].uid;
+            dv.attribute = {id: obj[key].uid};
             dv.value = obj[key].value;
             attributeValues.push(dv); 
         } 
@@ -177,7 +171,7 @@ function _updateRecension(obj, callback) {
         traditional: true,
         success: function(response) {
             if(response.response.status == "SUCCESS"){
-				_recension = obj;
+				_recensions[_editingIndexRecension] = obj;
 		
                 if (typeof callback === "function") {
                     
@@ -210,6 +204,10 @@ var RecensionStore  = _.extend(EventEmitter.prototype, {
         }
         return jQuery.extend(true, {}, _recensions[_editingIndexRecension]);
 
+    },
+
+    getRecensionByIndex: function(index) {
+        return jQuery.extend(true, {}, _recensions[index]);
     },
 
     emitChange: function() {
@@ -246,10 +244,7 @@ AppDispatcher.register(function(payload) {
         //recension
         case RecensionConstants.ACTION_ADD:
             _addRecension(payload.recension,function(){
-				_searchRecension({},function(){
-					RecensionStore.emitChange();
-					RecensionStore.emitEdit();
-				});
+				RecensionStore.emitChange();
             });
             break;
         case RecensionConstants.ACTION_EDIT:

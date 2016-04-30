@@ -14,7 +14,7 @@ var Modal = require("react-bootstrap").Modal;
 
 var moment = require("moment");
 
-var PersonList = require("./recension-person-list"),
+var PersonListRecension = require("./recension-person-list"),
     PersonActions = require("../actions/person-actions"),
 	
     PersonSearchPanel = require("./person-search-panel"),
@@ -72,7 +72,7 @@ var RecensionDetailForm = React.createClass({
         this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {
-		//PersonActions.searchPerson({firstName: 'test', orgUnitUid: 'zmqii2FMVkS'});
+		
         return {
             hide: {display:'none'},
 			addPersonFormShow: false,
@@ -84,7 +84,7 @@ var RecensionDetailForm = React.createClass({
         }
     },
 	componentWillUpdate: function(prevProps, prevState){
-		//PersonActions.searchPerson({firstName: 'test', orgUnitUid: 'zmqii2FMVkS'});
+		
 	},
     componentDidMount: function() {
 		RecensionStore.addEditListener(this._onEdit);
@@ -241,7 +241,7 @@ var RecensionDetailForm = React.createClass({
             </div>
 			<div className="row">
 				<div className="col-md-12">
-					<PersonList persons={self.state.persons}  />
+					<PersonListRecension persons={self.state.persons}  />
 				</div>
 			</div>
 			<div className="row">
@@ -250,7 +250,7 @@ var RecensionDetailForm = React.createClass({
 					<Modal.Title id="contained-modal-title">Add Person Modal</Modal.Title>
 				  </Modal.Header >
 				  <Modal.Body>
-						<PersonSearchPanel />
+						<PersonSearchPanel recension={this.state.editingRecension} />
 				  </Modal.Body>
 				  <Modal.Footer>
 					<Button onClick={self._onCloseModal}>Close</Button>

@@ -17,7 +17,7 @@ var Button = require("react-bootstrap").Button;
 
 var Modal = require("react-bootstrap").Modal;
 
-var PersonList = React.createClass({
+var PersonListRecension = React.createClass({
 
 	_onClickEdit(index){
 		
@@ -149,4 +149,4 @@ var PersonList = React.createClass({
     }
 });
 
-module.exports = PersonList;
+module.exports = PersonListRecension;

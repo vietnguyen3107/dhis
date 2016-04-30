@@ -24,6 +24,7 @@ var RecensionList = React.createClass({
         if(this.props.recensions != null)
         {
             recensionList = this.props.recensions.map(function(item, index) {
+				var code = (item.code != null) ? item.code.value :(item[this.state.attrs["code"]] != null ? item[this.state.attrs["code"]].value : "");
                 return (
                     <tr key={index}>
                         <td>{(item.code != null) ? item.code.value :(item[this.state.attrs["code"]] != null ? item[this.state.attrs["code"]].value : "")}</td>
@@ -39,7 +40,7 @@ var RecensionList = React.createClass({
                             <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}>Edit</Button>
                         </td>
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, {firstName: 'test', orgUnitUid: 'zmqii2FMVkS'})}>Detail</Button>
+                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, { orgUnitUid: 'zmqii2FMVkS', recension : code})}>Detail</Button>
                         </td>
 
                     </tr>

@@ -154,6 +154,23 @@ var PersonForm = React.createClass({
     componentWillMount: function(){
         var self = this;
         
+        //recensions
+        $.get("../../../../dhis/api/optionSets/EBYskOSmXH5?" + _config.optionFieldSearch, function (xml){
+            
+            var recensions = [];
+            var options = xml.options;        
+            options.forEach(function(entry) {
+                recension = {};
+                recension.value = entry.code;
+                recension.label = entry.name;
+
+                recensions.push(recension);
+                
+            });
+
+            self.setState({recensions: recensions});
+            
+        });
         //applicationType
         $.get("../../../../dhis/api/optionSets/FQS1S2NwFyC?" + _config.optionFieldSearch, function (xml){
             
@@ -276,6 +293,7 @@ var PersonForm = React.createClass({
                     />
                 </div>
 
+
             </div>
 
             <div className="row">
@@ -309,8 +327,16 @@ var PersonForm = React.createClass({
                     onChange={self._onChange.bind(this, 'procesedBy')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.procesedBy == null) ? "" : self.state.editingPerson.procesedBy.value}/>
                 </div>
-                <div className="col-md-4">
-                    <label></label>
+                <div className="col-md-4 form-group-sm">
+                    <label>recension*</label>
+                    <SimpleSelect
+                        name="recension"    
+                        onChange={self._onSelectChange.bind(this, "recension")}                    
+                        options={self.state.recensions}
+                        value={(self.state.editingPerson == null ||  self.state.editingPerson.recension == null) ? "" : self.state.editingPerson.recension.value}
+                       
+                
+                    />
                 </div>
                 <div className="col-md-4">
                     <label></label>

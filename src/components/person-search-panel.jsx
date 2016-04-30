@@ -12,7 +12,7 @@ var PersonSearchPanel = React.createClass({
 	
 		if (this.isMounted()) {
 			this.setState({
-				persons: PersonStore.getSearchPersons(),
+				persons: PersonStore.getPersons(),
 			})
         }
     },
@@ -28,6 +28,10 @@ var PersonSearchPanel = React.createClass({
 			orgUnitUid: ""
         }
     },
+	
+	componentWillReceiveProps : function(props){
+		this.setState({recension: props.recension});
+	},
     componentDidMount: function() {
         PersonStore.addChangeListener(this._onChange);
     },
@@ -69,7 +73,7 @@ var PersonSearchPanel = React.createClass({
 					</div>
 				</div>
 				<div className='col-md-8'>
-						<PersonList persons={this.state.persons}  />
+						<PersonList persons={this.state.persons} recension={this.props.recension}  />
 					
 				</div>
 			</div>

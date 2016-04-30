@@ -60,7 +60,7 @@ function _addPerson(person, callback) {
     
     instance.attributes = attributes;
     
-    console.log(instance);
+    //console.log(instance);
     // return false;
 
     // PUT data
@@ -164,8 +164,66 @@ function _updatePerson(person, callback) {
         success: function(response) {
 
             if (typeof callback === "function") {
-                 _persons[_editingIndex] = person;
+				if(_personByRecensions.length > 0)
+				{
+					_personByRecensions[_editingIndex] = person;
+				
+				}
+				else
+				{
+					_persons[_editingIndex] = person;
+				
+				}
                 //_editingIndex = -1;
+                callback();
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status + ":" + thrownError + ajaxOptions);
+        }
+    });
+}
+
+function _addPersonToRecension(index, recension, callback) {
+    var instance = {};
+	_editingIndex = index;
+	
+	var person = jQuery.extend(true, {}, _persons[_editingIndex]);
+	person["recension"] = {};
+    person["recension"].value = recension.code.value;
+    person["recension"].uid = "rDhgZbgg3Nt";
+	
+    instance.trackedEntity = person.trackedEntity.value;
+    instance.orgUnit = person.orgUnit.value;
+    var attributes = [];
+	Object.keys(person).forEach(function(key){
+        if(typeof person[key].uid !== "undefined")
+		{            
+            var attr = {};
+            attr.attribute = person[key].uid;
+            attr.value = person[key].value;
+            attributes.push(attr);
+        } 
+    });
+		
+    instance.attributes = attributes;
+	console.log("add to recension ");
+	console.log(instance);
+    // PUT data
+    $.ajax({
+        url: _queryURL_api + 'trackedEntityInstances/' + person.instance.value,
+        type: 'PUT',
+        data: JSON.stringify(instance ),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        traditional: true,
+        success: function(response) {
+
+            if (typeof callback === "function") {
+                 _persons[_editingIndex] = person;
+                _editingIndex = -1;
+				_personByRecensions.push(person);
+				
                 callback();
             }
         },
@@ -219,8 +277,9 @@ function _searchPerson(person, callback) {
 function _searchPersonByRecension(person, callback) {
     var conditionSearch = "&pageSize=20";
             if(person != null  ){
-				if(person.firstName != "")
-					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + person.firstName;  
+
+				if(person.recension != "")
+					conditionSearch += "&filter=rDhgZbgg3Nt:EQ:" + person.recension;  
 				if(person.orgUnitUid != "")
 					conditionSearch += "&ou=" + person.orgUnitUid;
 				
@@ -303,7 +362,19 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
         if (_editingIndex < 0) {
             return null;
         }
+		if(_personByRecensions.length > 0)
+		{
+			//console.log(jQuery.extend(true, {}, _personByRecensions[_editingIndex]));
+			return jQuery.extend(true, {}, _personByRecensions[_editingIndex]);
+		}
         return jQuery.extend(true, {}, _persons[_editingIndex]);
+        // return _persons[_editingIndex];
+    },
+    getEditingPersonByRecension: function() {
+        if (_editingIndex < 0) {
+            return null;
+        }
+        return jQuery.extend(true, {}, _personByRecensions[_editingIndex]);
         // return _persons[_editingIndex];
     },
     emitEditPerson: function(callback) {
@@ -332,7 +403,7 @@ AppDispatcher.register(function(payload) {
             _editPerson(payload.index,function(){PersonStore.emitEditPerson();});
             
             break;
-
+       
         case PersonConstants.ACTION_UPDATE:
             _updatePerson(payload.person, function(){
                 PersonStore.emitEditPerson();
@@ -342,6 +413,10 @@ AppDispatcher.register(function(payload) {
             break;
         case PersonConstants.ACTION_SEARCH:
 			_searchPerson(payload.person, function(){PersonStore.emitChange();  });
+            break;
+		
+        case PersonConstants.ACTION_ADD_TO_RECENSION:
+			_addPersonToRecension(payload.index, payload.recension, function(){PersonStore.emitChange();  });
             break;
 		
         case PersonConstants.ACTION_SEARCH_BY_RECENSION:

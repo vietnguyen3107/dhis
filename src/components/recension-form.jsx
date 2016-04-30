@@ -123,6 +123,10 @@ var RecensionForm = React.createClass({
     componentWillMount: function(){
         var self = this;
 
+        $.get("./data/recensionAttributes.json", function (json){
+            self.setState({attrs: json});
+            
+        });
         //recensionStatus
         $.get("../../../../dhis/api/optionSets/vcyt1fmc4Zt?" + _config.optionFieldSearch, function (xml){
             
@@ -151,6 +155,39 @@ var RecensionForm = React.createClass({
         return (
             <form className="form" style={self.props.showStatus != "form" ? self.state.hide : {}}>
             <div className="row">
+			
+
+                <div className="col-md-4  form-group-sm">
+                    <label>code</label>
+                    <Input type="text" bsSize="xsmall"                        
+                        onChange={self._onChange.bind(this, 'code')}
+
+                        value=
+                        {
+                            (self.state.editingRecension && self.state.editingRecension.code) ? 
+                                self.state.editingRecension.code.value : 
+                                ((self.state.editingRecension && self.state.editingRecension.code == null && self.state.editingRecension[self.state.attrs["code"]]) ?
+                                        self.state.editingRecension[self.state.attrs["code"]].value  : "")
+                        }
+                    />
+                        
+                </div>
+
+                <div className="col-md-4  form-group-sm">
+                    <label>name</label>
+                    <Input type="text" bsSize="xsmall"                        
+                        onChange={self._onChange.bind(this, 'name')}
+
+                        value=
+                        {
+                            (self.state.editingRecension && self.state.editingRecension.name) ? 
+                                self.state.editingRecension.name.value : 
+                                ((self.state.editingRecension && self.state.editingRecension.name == null && self.state.editingRecension[self.state.attrs["name"]]) ?
+                                        self.state.editingRecension[self.state.attrs["name"]].value  : "")
+                        }
+                    />
+                        
+                </div>
 
                 <div className="col-md-4 form-group-sm">
                 <label>recensionFromDate</label>
@@ -167,7 +204,8 @@ var RecensionForm = React.createClass({
                         }
                     ></DatePicker>
                 </div>
-
+                </div>
+				<div className="row">
                 <div className="col-md-4 form-group-sm">
                 <label>recensionMeetingDate</label>
                     <DatePicker className="form-control"
@@ -218,7 +256,7 @@ var RecensionForm = React.createClass({
                 </div>
 
 
-                <div className="col-md-4">
+                <div className="col-md-4  form-group-sm">
                     <label>recensionChairPosition</label>
                     <Input type="text" bsSize="small"                        
                         onChange={self._onChange.bind(this, 'recensionChairPosition')}
@@ -234,7 +272,7 @@ var RecensionForm = React.createClass({
                         
                 </div>
 
-                <div className="col-md-4">
+                <div className="col-md-4  form-group-sm">
                     <label>recensionChairPerson</label>
                     <Input type="text" bsSize="small"                        
                         onChange={self._onChange.bind(this, 'recensionChairPerson')}

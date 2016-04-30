@@ -38,6 +38,13 @@ var PersonActions = {
             person: person,
         })
     },
+    addPersonToRecension: function(index, recension) {
+        AppDispatcher.dispatch({
+            action: PersonConstants.ACTION_ADD_TO_RECENSION,
+            index: index,
+            recension: recension,
+        })
+    },
     clearPerson: function() {
         AppDispatcher.dispatch({
             action: PersonConstants.ACTION_CLEAR
