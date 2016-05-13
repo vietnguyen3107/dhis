@@ -2,6 +2,8 @@ var React = require("react"),
     PersonStore = require("../stores/person-store"),
     PersonActions = require("../actions/person-actions");
 var Table = require("react-bootstrap").Table;
+var Button = require("react-bootstrap").Button;
+var Glyphicon = require("react-bootstrap").Glyphicon;
 
 var PersonList = React.createClass({
     render: function() {
@@ -11,11 +13,11 @@ var PersonList = React.createClass({
                     <td>{(person && person.appCode) ? person.appCode.value : ""}</td>
                     <td>{(person && person.firstName) ? person.firstName.value : ""}</td>
                     <td>{(person && person.birthday) ? person.birthday.value : ""}</td>
-                    <td><input type="button" value="Edit" className="btn btn-success btn-xs" onClick={PersonActions.editPerson.bind(null, index)} />
-                    </td>
-              
                     <td>
-                        <input type="button" value="Remove" className="btn btn-danger btn-xs hidden" onClick={PersonActions.removePerson.bind(null, index)} />
+						<Button  bsSize="xsmall" onClick={PersonActions.editPerson.bind(null, index)}><Glyphicon glyph="edit" /></Button>
+						&nbsp;
+						&nbsp;
+						<Button  bsSize="xsmall"  onClick={PersonActions.removePerson.bind(null, index)}><Glyphicon glyph="remove" /></Button>
                     </td>
 
                 </tr>

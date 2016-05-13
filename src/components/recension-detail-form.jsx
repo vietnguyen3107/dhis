@@ -6,6 +6,7 @@ var DatePicker = require("react-datepicker");
 var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
 var Label = require("react-bootstrap").Label;
+var Glyphicon = require("react-bootstrap").Glyphicon;
 
 
 var Tabs = require("react-bootstrap").Tabs;
@@ -232,13 +233,14 @@ var RecensionDetailForm = React.createClass({
                 <div className="col-md-12">
                     
                     <div  className="pull-left">
-                    <Button bsStyle="default" onClick={self._onClickAddForm}>Add Person</Button>
+                    <Button bsStyle="default" onClick={self._onClickAddForm}><Glyphicon glyph="plus" /> Add Person</Button>
                     </div>
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClose}>Close</Button>
+                    <Button bsStyle="default" onClick={self._onClickClose}>Exit <Glyphicon glyph="log-out" /></Button>
                     </div>
                 </div>
             </div>
+				<hr/>
 			<div className="row">
 				<div className="col-md-12">
 					<PersonListRecension persons={self.state.persons}  />

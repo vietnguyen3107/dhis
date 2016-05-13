@@ -63,7 +63,6 @@ var PersonForm = React.createClass({
             this.state.editingPerson[attr].value = val;
         }
 
-        console.log(this.state.editingPerson);
 
 
     },
@@ -186,6 +185,23 @@ var PersonForm = React.createClass({
             });
 
             self.setState({applicationTypes: applicationTypes});
+            
+        });
+		 //applicationStatus
+        $.get("../../../../dhis/api/optionSets/SCj9vq6xzYz?" + _config.optionFieldSearch, function (xml){
+            
+            var applicationStatuses = [];
+            var options = xml.options;        
+            options.forEach(function(entry) {
+                applicationStatus = {};
+                applicationStatus.value = entry.code;
+                applicationStatus.label = entry.name;
+
+                applicationStatuses.push(applicationStatus);
+                
+            });
+
+            self.setState({applicationStatuses: applicationStatuses});
             
         });
         //disciplines
@@ -469,6 +485,19 @@ var PersonForm = React.createClass({
                     <Input type="text"
                     onChange={self._onChange.bind(this, 'mobilePhone')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.mobilePhone == null) ? "" : self.state.editingPerson.mobilePhone.value}/>
+                </div>
+				
+				
+                <div className="col-md-4 form-group-sm">
+                    <label>applicationStatus</label>
+                    <SimpleSelect
+                        name="applicationStatus"    
+                        onChange={self._onSelectChange.bind(this, "applicationStatus")}                    
+                        options={self.state.applicationStatuses}
+                        value={(self.state.editingPerson == null ||  self.state.editingPerson.applicationStatus == null) ? "" : self.state.editingPerson.applicationStatus.value}
+                       
+                
+                    />
                 </div>
             </div>
 

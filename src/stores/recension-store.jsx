@@ -84,7 +84,8 @@ function _addRecension(obj, callback){
     var o = {};
 	o.code = obj.code.value;
 	o.name = obj.name.value;
-	o.optionSet = _config.recensionUid;
+	o.optionSet = {id:_config.recensionUid};
+
 	
     var attributeValues = [];
     Object.keys(obj).forEach(function(key){

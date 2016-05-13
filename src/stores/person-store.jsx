@@ -97,8 +97,27 @@ function _removePerson(index) {
 	}else if(index < _editingIndex){
 		_editingIndex--;
 	}
-    if(confirm("Do you want ro remove this person?"))
-        _persons.splice(index, 1);
+    if(confirm("Do you want ro remove this person?")){
+		$.ajax({
+			url: _queryURL_api + 'trackedEntityInstances/' + _persons[index].instance.value,
+			type: 'DELETE',
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			traditional: true,
+			success: function(response) {
+
+				if (typeof callback === "function") {
+					_persons.splice(index, 1);
+					callback();
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status + ":" + thrownError + ajaxOptions);
+			}
+		});
+        
+	
+	}
 }
 
 function _editPerson(index, callback) {
@@ -182,6 +201,62 @@ function _updatePerson(person, callback) {
             alert(xhr.status + ":" + thrownError + ajaxOptions);
         }
     });
+}
+
+function _updateListPerson(persons, callback) {
+    
+
+    console.log("update list");
+	var list = [];
+	
+	persons.forEach(function(person){
+		var instance = {};
+		instance.trackedEntityInstance = person.instance.value;
+		instance.trackedEntity = person.trackedEntity.value;
+		instance.orgUnit = person.orgUnit.value;
+		var attributes = [];
+		Object.keys(person).forEach(function(key){
+			if(typeof person[key].uid !== "undefined" 
+		   
+				){            
+				var attr = {};
+				attr.attribute = person[key].uid;
+				attr.value = person[key].value;
+				attributes.push(attr);
+			} 
+		});
+		
+		instance.attributes = attributes;
+		
+		// PUT data
+		$("*").css("cursor", "wait");
+		$.ajax({
+			url: _queryURL_api + 'trackedEntityInstances/' + instance.trackedEntityInstance,
+			type: 'PUT',
+			data: JSON.stringify(instance ),
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			traditional: true,
+			success: function(response) {
+				$("*").css("cursor", "default");
+				console.log(response);
+				if (typeof callback === "function") {
+					callback();
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.status + ":" + thrownError + ajaxOptions);
+			}
+		});
+		
+		list.push(instance);
+	
+	});
+	
+	//var trackEntities = {trackedEntityInstances: list};
+
+    
 }
 
 function _addPersonToRecension(index, recension, callback) {
@@ -406,6 +481,13 @@ AppDispatcher.register(function(payload) {
        
         case PersonConstants.ACTION_UPDATE:
             _updatePerson(payload.person, function(){
+                PersonStore.emitEditPerson();
+                PersonStore.emitChange();
+            });
+            
+            break;
+        case PersonConstants.ACTION_UPDATE_LIST:
+            _updateListPerson(payload.persons, function(){
                 PersonStore.emitEditPerson();
                 PersonStore.emitChange();
             });

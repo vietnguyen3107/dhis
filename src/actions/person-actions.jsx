@@ -26,6 +26,12 @@ var PersonActions = {
             person: person,
         })
     },
+    updateListPerson: function(persons) {
+        AppDispatcher.dispatch({
+            action: PersonConstants.ACTION_UPDATE_LIST,
+            persons: persons,
+        })
+    },
     searchPerson: function(person) {
         AppDispatcher.dispatch({
             action: PersonConstants.ACTION_SEARCH,

@@ -17,10 +17,19 @@
     "reactify": "^1.1.1",
     "underscore": "^1.8.3",
     "vinyl-source-stream": "^1.1.0",
+    "react-bootstrap": "^0.28.2",
+    "moment": "^2.11.1",
+    "react-global": "",
+    "i18n-js": "",
+    "exceljs": "",
     "watchify": "^3.5.0"
   },
   "dependencies": {
     "react-datepicker": "^0.15.2",
-    "react-select": "^0.9.1"
+    "react-native": "^0.17.0",
+    "react-native-i18n": "0.0.7",
+    "react-select": "^0.9.1",
+    "react-fontawesome": ""
+	
   }
 }

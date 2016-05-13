@@ -2,6 +2,7 @@ var React = require("react"),
     RecensionActions = require("../actions/recension-actions");
 var Table = require("react-bootstrap").Table;
 var Button = require("react-bootstrap").Button;
+var Glyphicon = require("react-bootstrap").Glyphicon;
 
 var RecensionList = React.createClass({
 	componentWillMount: function(){
@@ -37,10 +38,12 @@ var RecensionList = React.createClass({
                         </td>
 
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}>Edit</Button>
-                        </td>
-                        <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, { orgUnitUid: 'zmqii2FMVkS', recension : code})}>Detail</Button>
+                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}><Glyphicon glyph="edit" /></Button>
+                        &nbsp;
+                        &nbsp;
+                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, { orgUnitUid: 'zmqii2FMVkS', recension : code})}>
+							<Glyphicon glyph="list" />
+							</Button>
                         </td>
 
                     </tr>
@@ -56,7 +59,6 @@ var RecensionList = React.createClass({
 							<th>Code</th>
 							<th>Name</th>
 							<th>Chair Person</th>
-							<th>#</th>
 							<th>#</th>
 						</tr>
 					</thead>

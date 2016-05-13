@@ -5,6 +5,7 @@ var SimpleSelect = require('react-select');
 var DatePicker = require("react-datepicker");
 var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
+
 var moment = require("moment");
 
 
@@ -155,11 +156,11 @@ var RecensionForm = React.createClass({
         return (
             <form className="form" style={self.props.showStatus != "form" ? self.state.hide : {}}>
             <div className="row">
-			
+	
 
                 <div className="col-md-4  form-group-sm">
                     <label>code</label>
-                    <Input type="text" bsSize="xsmall"                        
+                    <Input type="text" bsSize="small"                        
                         onChange={self._onChange.bind(this, 'code')}
 
                         value=
@@ -175,7 +176,7 @@ var RecensionForm = React.createClass({
 
                 <div className="col-md-4  form-group-sm">
                     <label>name</label>
-                    <Input type="text" bsSize="xsmall"                        
+                    <Input type="text" bsSize="small"                        
                         onChange={self._onChange.bind(this, 'name')}
 
                         value=
