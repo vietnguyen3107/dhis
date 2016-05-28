@@ -131,7 +131,7 @@ function _addLicense(license, callback){
         traditional: true,
         success: function(response) {
             if(response.response.importSummaries[0].status == "SUCCESS"){
-                obj.event = {value: response.reference};
+                license.event = {value: response.reference};
                 if (typeof callback === "function") {
                     
                     callback();

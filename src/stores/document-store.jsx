@@ -1,17 +1,17 @@
 var _ = require("underscore"),
     PersonConstants = require("../constants/person-constants"),
-    ResultConstants = require("../constants/result-constants"),
+    DocumentConstants = require("../constants/document-constants"),
     AppDispatcher = require("../dispatcher/app-dispatcher"),
     EventEmitter = require('events').EventEmitter;
 var moment = require("moment");
 var PersonStore = require("../stores/person-store");
 
-var CHANGE_EVENT = 'result_change';
-var CHANGE_EDIT_EVENT = 'result_change_edit';
+var DISCIPLINE_CHANGE_EVENT = 'document_change';
+var DISCIPLINE_CHANGE_EDIT_EVENT = 'document_change_edit';
 
-var _personId = "";
-var _editingIndexResult = -1;
-var _result = {};
+var _personIdDocument = "";
+var _editingIndexDocument = -1;
+var _documents = [];
 
 // -- 
     var _config = $.parseJSON($.ajax({
@@ -36,7 +36,7 @@ var _result = {};
     var _queryURL_api = _dhisSiteURL + 'api/';
 
 function lowercaseFirstLetter(s) {
-    if(typeof s  !== "undefined")
+	if(typeof s  !== "undefined")
 		return s.charAt(0).toLowerCase() + s.slice(1);
 	else{
 		return s;
@@ -44,20 +44,20 @@ function lowercaseFirstLetter(s) {
 }
 
 
-function _searchResult(index, callback) {
+function _searchDocument(index, callback) {
     var person = PersonStore.getEditingPerson();
 
-    var conditionSearch = "pageSize=1";
+    var conditionSearch = "pageSize="+ _config.pageSize;
     if(person != null && person.instance != ""){
         _personId = person.instance.value;
-        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.resultStageUid ;
+        conditionSearch += "&trackedEntityInstance=" +_personId+ "&programStage=" + _config.documentStageUid;
     }
 
     $.get(_queryURL_api + "events.json?" + conditionSearch, function (json){
         var rows = json.events;
+        _documents.splice(0, _documents.length);
 
         if(typeof rows !== "undefined" && rows.length > 0){
-
             rows.forEach(function(entry) {
                 var _p = {};
                 _p.event = {value:entry.event};
@@ -83,41 +83,41 @@ function _searchResult(index, callback) {
                     });
                 }
 
-                _result = _p;
+                _documents.push(_p);
             });
         }
 		
-
         if (typeof callback === "function") {
+			
+			console.log(_documents);
             callback();
         }
     });
        
 }
 
-function _addResult(result, callback){
+function _addDocument(document, callback){
 
     var obj = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     obj.program = _config.programUid;
     obj.orgUnit = editingPerson.orgUnit.value;
-    obj.programStage = _config.resultStageUid;
+    obj.programStage = _config.documentStageUid;
 
     obj.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     obj.eventDate = moment();
-    obj.status = "ACTIVE";
+    obj.status = "COMPLETED";
 
     var dataValues = [];
-    Object.keys(result).forEach(function(key){
-        if(typeof result[key].uid !== "undefined" ){            
+    Object.keys(document).forEach(function(key){
+        if(typeof document[key].uid !== "undefined" ){            
             var dv = {};
-            dv.dataElement = result[key].uid;
-            dv.value = result[key].value;
+            dv.dataElement = document[key].uid;
+            dv.value = document[key].value;
             dataValues.push(dv); 
         } 
     });
-    
     obj.dataValues = dataValues;
 
     // return false;
@@ -131,9 +131,9 @@ function _addResult(result, callback){
         traditional: true,
         success: function(response) {
             if(response.response.importSummaries[0].status == "SUCCESS"){
-                result.event = {value: response.reference};
+                document.event = {value: response.reference};
                 if (typeof callback === "function") {
-                    
+                    _documents.push(document);
                     callback();
                 }
 
@@ -150,22 +150,24 @@ function _addResult(result, callback){
 }
 
 
-function _editResult(index, callback) {
+function _editDocument(index, callback) {
+    _editingIndexDocument = index;
 
+    callback();
 }
 
-function _updateResult(obj, callback) {
+function _updateDocument(obj, callback) {
     
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
 
     o.program = _config.programUid;
     o.orgUnit = editingPerson.orgUnit.value;
-    o.programStage = _config.resultStageUid;
+    o.programStage = _config.documentStageUid;
 
     o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     o.eventDate = moment();
-    o.status = "ACTIVE";
+    o.status = "COMPLETED";
 
     var dataValues = [];
     Object.keys(obj).forEach(function(key){
@@ -178,7 +180,7 @@ function _updateResult(obj, callback) {
     });
     
     o.dataValues = dataValues;
-
+	console.log(o);
     // return false;
     // PUT data
     $.ajax({
@@ -190,10 +192,8 @@ function _updateResult(obj, callback) {
         traditional: true,
         success: function(response) {
             if(response.response.status == "SUCCESS"){
-				_result = obj;
-		
                 if (typeof callback === "function") {
-                    
+                    _documents[_editingIndexDocument] = obj;
                     callback();
                 }
 
@@ -210,26 +210,30 @@ function _updateResult(obj, callback) {
 }
 
 
-var ResultStore  = _.extend(EventEmitter.prototype, {
-    getResult: function() {
-        return _result;
+var DocumentStore  = _.extend(EventEmitter.prototype, {
+    getDocuments: function() {
+        return _documents;
     },
-    getEditingResult: function() {
-        return _result;
+    getEditingDocument: function() {
+        if (_editingIndexDocument < 0) {
+            return null;
+        }
+		console.log('editingdocument');
+		console.log(jQuery.extend(true, {}, _documents[_editingIndexDocument]));
+        return jQuery.extend(true, {}, _documents[_editingIndexDocument]);
 
     },
-    emitChange: function() {
-        this.emit(CHANGE_EVENT);
+    emitChangeDocument: function() {
+        this.emit(DISCIPLINE_CHANGE_EVENT);
     },
-    addChangeListener: function(callback) {
-        this.on(CHANGE_EVENT, callback);
+    addChangeListenerDocument: function(callback) {
+        this.on(DISCIPLINE_CHANGE_EVENT, callback);
     },
-    emitEdit: function(callback) {
-        this.emit(CHANGE_EDIT_EVENT, callback);
+    emitEditDocument: function(callback) {
+        this.emit(DISCIPLINE_CHANGE_EDIT_EVENT, callback);
     },
-
-    addEditListener: function(callback) {
-        this.on(CHANGE_EDIT_EVENT, callback);
+    addEditListenerDocument: function(callback) {
+        this.on(DISCIPLINE_CHANGE_EDIT_EVENT, callback);
     },
 });
 
@@ -237,44 +241,41 @@ AppDispatcher.register(function(payload) {
     switch (payload.action) {
         //PERSON
         case PersonConstants.ACTION_EDIT:
-			_result = null; 
-            
-			
-            _searchResult(payload.index,function(){
-                ResultStore.emitChange();
-				ResultStore.emitEdit();
+				_editingIndexDocument = -1;
+				DocumentStore.emitEditDocument();
+            _searchDocument(payload.index,function(){
+				
+                DocumentStore.emitChangeDocument();
             });
             break;
 
         case PersonConstants.ACTION_CLEAR:
             _personId = "";
-            _result = null; 
-           
-            ResultStore.emitChange();  
-            ResultStore.emitEdit();
+            _documents.splice(0, _documents.length);
+
+            _editingIndexDocument = -1;
+            DocumentStore.emitChangeDocument();  
+            DocumentStore.emitEditDocument();
             break;
         
 
-        //result
-        case ResultConstants.ACTION_ADD:
-            _addResult(payload.result,function(){
-				_searchResult(0,function(){
-					ResultStore.emitChange();
-					ResultStore.emitEdit();
-				});
+        //Document
+        case DocumentConstants.ACTION_ADD:
+            _addDocument(payload.document,function(){
+                DocumentStore.emitChangeDocument();
             });
             break;
-        case ResultConstants.ACTION_EDIT:
-            _editResult(payload.index,function(){
-                ResultStore.emitEdit();
+        case DocumentConstants.ACTION_EDIT:
+            _editDocument(payload.index,function(){
+                DocumentStore.emitEditDocument();
             });
             break;
-        case ResultConstants.ACTION_UPDATE:
-            _updateResult(payload.obj,function(){
-                ResultStore.emitChange();
+        case DocumentConstants.ACTION_UPDATE:
+            _updateDocument(payload.obj,function(){
+                DocumentStore.emitChangeDocument();
             });
             break;
     }
 });
 
-module.exports = ResultStore;
+module.exports = DocumentStore;

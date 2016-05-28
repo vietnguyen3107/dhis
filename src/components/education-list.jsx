@@ -38,7 +38,7 @@ var EducationList = React.createClass({
 						<td>{(edu && edu.enrollmentStatus) ? edu.enrollmentStatus.value : ""}</td>
 						
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={EducationActions.editEducation.bind(null, index)}>Edit</Button>
+                            <Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={EducationActions.editEducation.bind(null, index)}>Edit</Button>
                         </td>
 
                     </tr>

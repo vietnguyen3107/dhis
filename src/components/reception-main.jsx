@@ -10,6 +10,7 @@ var I18n = require("i18n-js");
 var EducationPanel = require("./education-panel");
 var ExperiencePanel = require("./experience-panel");
 var DisciplinePanel = require("./discipline-panel");
+var DocumentPanel = require("./document-panel");
 
 
 
@@ -28,7 +29,7 @@ var ReceptionMain = React.createClass({
         this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {
-    	
+
         return {
             persons: PersonStore.getPersons(),
 			me: [],
@@ -41,19 +42,19 @@ var ReceptionMain = React.createClass({
 	componentWillMount: function(){
         var self = this;
 
-       
+
         //me
         $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
             self.setState({me: json});
-            
+
         });
 		//PersonActions.searchPerson({firstName: 'test'});
 	},
     render: function() {
         return (
-		
+
 		<div className='container' >
-			
+
 			<nav className="navbar navbar-default">
 				<div className="container-fluid">
 				    <div className="navbar-header">
@@ -86,9 +87,9 @@ var ReceptionMain = React.createClass({
 								<PersonList persons={this.state.persons}  />
 								</div>
 							</div>
-				  
+
 						</div>
-						
+
 					</div>
 				</div>
 				<div className='col-md-8'>
@@ -104,28 +105,36 @@ var ReceptionMain = React.createClass({
 					    	</Tab>
 						    <Tab eventKey={2} title="EDUCATION">
 						    	<div className="panel-body">
-										<div>											
+										<div>
 						    				<EducationPanel />
 										</div>
 								</div>
 						    </Tab>
 						    <Tab eventKey={3} title="EXPERIENCE">
 						    	<div className="panel-body">
-										<div>											
+										<div>
 						    				<ExperiencePanel />
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={4} title="DISCIPLINE">
+                <Tab eventKey={4} title="DOCUMENT">
 						    	<div className="panel-body">
-										<div>											
+										<div>
+						    				<DocumentPanel />
+										</div>
+								</div>
+						    </Tab>
+
+						    <Tab eventKey={5} title="DISCIPLINE">
+						    	<div className="panel-body">
+										<div>
 						    				<DisciplinePanel />
 										</div>
 								</div>
 						    </Tab>
-						  
+
 						</Tabs>
-					
+
 				</div>
 			</div>
 			<div className='row'>

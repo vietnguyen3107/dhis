@@ -129,7 +129,7 @@ function _addExperience(experience, callback){
         traditional: true,
         success: function(response) {
             if(response.response.importSummaries[0].status == "SUCCESS"){
-                obj.event = {value: response.reference};
+                experience.event = {value: response.reference};
                 if (typeof callback === "function") {
                     _experiences.push(experience);
                     callback();

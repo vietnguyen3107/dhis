@@ -38,10 +38,10 @@ var RecensionList = React.createClass({
                         </td>
 
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}><Glyphicon glyph="edit" /></Button>
+                            <Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={RecensionActions.editRecension.bind(null, index)}><Glyphicon glyph="edit" /></Button>
                         &nbsp;
                         &nbsp;
-                            <Button bsStyle="success" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, { orgUnitUid: 'zmqii2FMVkS', recension : code})}>
+                            <Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={RecensionActions.editDetailRecension.bind(null, index, { orgUnitUid: 'zmqii2FMVkS', recension : code})}>
 							<Glyphicon glyph="list" />
 							</Button>
                         </td>

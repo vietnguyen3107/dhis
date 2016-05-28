@@ -129,7 +129,7 @@ function _addEducation(education, callback){
         traditional: true,
         success: function(response) {
             if(response.response.importSummaries[0].status == "SUCCESS"){
-                obj.event = {value: response.reference};
+                education.event = {value: response.reference};
                 if (typeof callback === "function") {
                     _educations.push(education);
                     callback();

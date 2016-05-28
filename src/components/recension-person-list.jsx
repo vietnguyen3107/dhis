@@ -49,12 +49,26 @@ var PersonListRecension = React.createClass({
 		var tableToExcel=new TableToExcel();
 		 tableToExcel.render("dvData");
 	},
+	_onClickPrint(){
+		
+			var divToPrint=document.getElementById("dvData");
+                    newWin= window.open("");
+                    var html ="<style>table { margin: 1em; border-collapse: collapse;width:99% }"+
+                        "td, th { padding: .3em; border: 1px #ccc solid; } "+
+                        "@media print {thead { display: table-header-group; } .no-print , .no-print *{ display: none !important; border:none; } }"+
+						".no-display{display:none}" +
+                        "</style>"+
+						" <table width='99%' class='no-print'><tr><td align='right'><button onclick='window.print();'> Print</button></td></tr></table><br/> " +
+                        divToPrint.outerHTML ;
+                    newWin.document.write(html);
+	},
 	_onClickEdit(index){
 		
 		this.setState({ showEditPersonForm: true, personIndex: index});
 	},
 	_onClickPrintHorizoneForm(){
 		this.setState({ showHorizoneForm: true});
+		
 	},
 	_onClickChangeStatusForm(){
 		this.setState({ showChangeStatusForm: true});
@@ -234,9 +248,9 @@ var PersonListRecension = React.createClass({
             <div>
 				
 				<div>
-				<Button bsStyle="success" bsSize="xsmall" onClick={self._onClickPrintHorizoneForm}><Glyphicon glyph="print" /> Print Horizone Form</Button>
+				<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrintHorizoneForm}><Glyphicon glyph="print" /> Horizone Form</Button>
 				&nbsp;
-				<Button bsStyle="success" bsSize="xsmall" onClick={self._onClickChangeStatusForm}><Glyphicon glyph="retweet" /> Change Status</Button>
+				<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickChangeStatusForm}><Glyphicon glyph="retweet" /> Change Status</Button>
 				</div>
 				<div className="clearfix "/>
                 <Table responsive>
@@ -367,7 +381,10 @@ var PersonListRecension = React.createClass({
 				  <Modal.Body>
 					<div>
 						<div >
-						<Button bsStyle="success" bsSize="xsmall" onClick={self._onClickExportExcel}><Glyphicon glyph="export" /> Export Excel</Button>
+						<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickExportExcel}><Glyphicon glyph="export" /> Export Excel</Button>
+						&nbsp;
+						&nbsp;
+						<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrint}><Glyphicon glyph="print" /> Print</Button>
 						</div>
 
 						<div className="clearfix "/>
@@ -470,7 +487,7 @@ var PersonListRecension = React.createClass({
 				  </Modal.Body>
 				  <Modal.Footer>
 				  
-					<Button bsStyle="success"  onClick={self._onClickChangeStatus}><Glyphicon glyph="retweet" /> Change</Button>
+					<Button bsStyle="info" bsSize="sm"  onClick={self._onClickChangeStatus}><Glyphicon glyph="retweet" /> Change</Button>
 					&nbsp;
 					<Button onClick={this._onCloseModalChangeStatusForm}>Close</Button>
 				  </Modal.Footer>

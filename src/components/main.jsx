@@ -10,6 +10,7 @@ var I18n = require("i18n-js");
 var EducationPanel = require("./education-panel");
 var ExperiencePanel = require("./experience-panel");
 var DisciplinePanel = require("./discipline-panel");
+var DocumentPanel = require("./document-panel");
 var LicensePanel = require("./license-panel");
 var ResultPanel = require("./result-panel");
 
@@ -116,21 +117,28 @@ var Main = React.createClass({
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={4} title="DISCIPLINE">
+						    <Tab eventKey={4} title="DOCUMENT">
+						    	<div className="panel-body">
+										<div>											
+						    				<DocumentPanel />
+										</div>
+								</div>
+						    </Tab>
+						    <Tab eventKey={5} title="DISCIPLINE">
 						    	<div className="panel-body">
 										<div>											
 						    				<DisciplinePanel />
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={5} title="LICENSE">
+						    <Tab eventKey={6} title="LICENSE">
 						    	<div className="panel-body">
 										<div>											
 						    				<LicensePanel />
 										</div>
 								</div>
 						    </Tab>
-						    <Tab eventKey={6} title="RESULT">
+						    <Tab eventKey={7} title="RESULT">
 						    	<div className="panel-body">
 										<div>											
 						    				<ResultPanel />

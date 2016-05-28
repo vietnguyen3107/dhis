@@ -31,7 +31,7 @@ var DisciplineList = React.createClass({
                         <td>{(entry.disciplineSigner != null) ? entry.disciplineSigner.value :(entry[this.state.attrs["disciplineSigner"]] != null ? entry[this.state.attrs["disciplineSigner"]].value : "")}</td>
            
                         <td>
-                            <Button bsStyle="success" bsSize="xsmall" onClick={DisciplineActions.editDiscipline.bind(null, index)}>Edit</Button>
+                            <Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={DisciplineActions.editDiscipline.bind(null, index)}>Edit</Button>
                         </td>
 
                     </tr>

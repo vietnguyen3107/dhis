@@ -29,6 +29,7 @@
     "react-native": "^0.17.0",
     "react-native-i18n": "0.0.7",
     "react-select": "^0.9.1",
+    "react-checkbox": "",
     "react-fontawesome": ""
 	
   }

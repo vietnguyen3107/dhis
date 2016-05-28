@@ -132,7 +132,7 @@ function _addDiscipline(discipline, callback){
         traditional: true,
         success: function(response) {
             if(response.response.importSummaries[0].status == "SUCCESS"){
-                obj.event = {value: response.reference};
+                discipline.event = {value: response.reference};
                 if (typeof callback === "function") {
                     _disciplines.push(discipline);
                     callback();
