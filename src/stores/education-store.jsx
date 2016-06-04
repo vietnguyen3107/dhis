@@ -13,7 +13,7 @@ var _personId = "";
 var _editingIndexEducation = -1;
 var _educations = [];
 
-// -- 
+// --
     var _config = $.parseJSON($.ajax({
         type: "GET",
         dataType: "json",
@@ -90,7 +90,7 @@ function _searchEducation(index, callback) {
             callback();
         }
     });
-       
+
 }
 
 function _addEducation(education, callback){
@@ -108,14 +108,14 @@ function _addEducation(education, callback){
 
     var dataValues = [];
     Object.keys(education).forEach(function(key){
-        if(typeof education[key].uid !== "undefined" ){            
+        if(typeof education[key].uid !== "undefined" ){
             var dv = {};
             dv.dataElement = education[key].uid;
             dv.value = education[key].value;
-            dataValues.push(dv); 
-        } 
+            dataValues.push(dv);
+        }
     });
-    
+
     obj.dataValues = dataValues;
 
     // return false;
@@ -154,13 +154,13 @@ function _editEducation(index, callback) {
 }
 
 function _updateEducation(obj, callback) {
-    
+
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
 
+    o.programStage = _config.educationStageUid;
     o.program = _config.programUid;
     o.orgUnit = editingPerson.orgUnit.value;
-    o.programStage = _config.educationStageUid;
 
     o.trackedEntityInstance = editingPerson.trackedEntityInstance.value;
     o.eventDate = moment();
@@ -168,14 +168,14 @@ function _updateEducation(obj, callback) {
 
     var dataValues = [];
     Object.keys(obj).forEach(function(key){
-        if(typeof obj[key].uid !== "undefined" ){            
+        if(typeof obj[key].uid !== "undefined" ){
             var dv = {};
             dv.dataElement = obj[key].uid;
             dv.value = obj[key].value;
-            dataValues.push(dv); 
-        } 
+            dataValues.push(dv);
+        }
     });
-    
+
     o.dataValues = dataValues;
 
     // return false;
@@ -237,9 +237,9 @@ AppDispatcher.register(function(payload) {
     switch (payload.action) {
         //PERSON
         case PersonConstants.ACTION_EDIT:
-			_editingIndexEducation = -1; 
+			_editingIndexEducation = -1;
             EducationStore.emitEdit();
-			
+
             _searchEducation(payload.index,function(){
                 EducationStore.emitChange();
             });
@@ -250,10 +250,10 @@ AppDispatcher.register(function(payload) {
             _educations.splice(0, _educations.length);
 
             _editingIndexEducation = -1;
-            EducationStore.emitChange();  
+            EducationStore.emitChange();
             EducationStore.emitEdit();
             break;
-        
+
 
         //EDUCATION
         case EducationConstants.ACTION_ADD:

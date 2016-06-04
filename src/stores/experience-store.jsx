@@ -13,7 +13,7 @@ var _personIdExperience = "";
 var _editingIndexExperience = -1;
 var _experiences = [];
 
-// -- 
+// --
     var _config = $.parseJSON($.ajax({
         type: "GET",
         dataType: "json",
@@ -63,9 +63,9 @@ function _searchExperience(index, callback) {
                 _p.event = {value:entry.event};
                 _p.status = {value:entry.status};
                 _p.program = {value:entry.program};
+                _p.enrollmentStatus = {value:entry.enrollmentStatus};
                 _p.programStage = {value:entry.programStage};
                 _p.enrollment = {value:entry.enrollment};
-                _p.enrollmentStatus = {value:entry.enrollmentStatus};
                 _p.orgUnit = {value:entry.orgUnit};
                 _p.orgUnitName = {value:entry.orgUnitName};
                 _p.trackedEntityInstance = {value:entry.trackedEntityInstance};
@@ -90,7 +90,7 @@ function _searchExperience(index, callback) {
             callback();
         }
     });
-       
+
 }
 
 function _addExperience(experience, callback){
@@ -108,14 +108,14 @@ function _addExperience(experience, callback){
 
     var dataValues = [];
     Object.keys(experience).forEach(function(key){
-        if(typeof experience[key].uid !== "undefined" ){            
+        if(typeof experience[key].uid !== "undefined" ){
             var dv = {};
             dv.dataElement = experience[key].uid;
             dv.value = experience[key].value;
-            dataValues.push(dv); 
-        } 
+            dataValues.push(dv);
+        }
     });
-    
+
     obj.dataValues = dataValues;
 
     // return false;
@@ -155,7 +155,7 @@ function _editExperience(index, callback) {
 }
 
 function _updateExperience(obj, callback) {
-    
+
     var o = {};
     var editingPerson = PersonStore.getEditingPerson();
 
@@ -169,14 +169,14 @@ function _updateExperience(obj, callback) {
 
     var dataValues = [];
     Object.keys(obj).forEach(function(key){
-        if(typeof obj[key].uid !== "undefined" ){            
+        if(typeof obj[key].uid !== "undefined" ){
             var dv = {};
             dv.dataElement = obj[key].uid;
             dv.value = obj[key].value;
-            dataValues.push(dv); 
-        } 
+            dataValues.push(dv);
+        }
     });
-    
+
     o.dataValues = dataValues;
 
     // return false;
@@ -240,7 +240,7 @@ AppDispatcher.register(function(payload) {
 				_editingIndexExperience = -1;
 				ExperienceStore.emitEditExperience();
             _searchExperience(payload.index,function(){
-				
+
                 ExperienceStore.emitChangeExperience();
             });
             break;
@@ -250,10 +250,10 @@ AppDispatcher.register(function(payload) {
             _experiences.splice(0, _experiences.length);
 
             _editingIndexExperience = -1;
-            ExperienceStore.emitChangeExperience();  
+            ExperienceStore.emitChangeExperience();
             ExperienceStore.emitEditExperience();
             break;
-        
+
 
         //Experience
         case ExperienceConstants.ACTION_ADD:

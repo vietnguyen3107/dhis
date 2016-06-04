@@ -6,6 +6,8 @@ var React = require("react"),
 var Button = require("react-bootstrap").Button;
 var Input = require("react-bootstrap").Input;
 var SimpleSelect = require('react-select');
+var DatePicker = require("react-datepicker");
+var moment = require("moment");
 
     var _config = $.parseJSON($.ajax({
         type: "GET",
@@ -13,13 +15,19 @@ var SimpleSelect = require('react-select');
         url: "./data/config.json",
         async: false
     }).responseText);
-	
+
 var PersonFormSearch = React.createClass({
     _onClickSearch: function() {
 		this.setState({
 			isLoading: true
 		});
-        PersonActions.searchPerson({firstName: this.state.nameSearch, orgUnitUid: this.state.orgUnitUid});
+        PersonActions.searchPerson({firstName: this.state.nameSearch
+            ,orgUnitUid: this.state.orgUnitUid
+            ,applicationStatus : this.state.applicationStatus
+            ,discipline : this.state.discipline
+            , appDateFrom : this.state.appDateFrom
+            , appDateTo : this.state.appDateTo
+        });
     },
 
     _onChangeName: function(e) {
@@ -36,7 +44,7 @@ var PersonFormSearch = React.createClass({
 		}
     },
 	_onChange: function(e) {
-		
+
 		if (this.isMounted()) {
 		this.setState({
             isLoading: false
@@ -50,7 +58,32 @@ var PersonFormSearch = React.createClass({
         });
 		this.props.callbackParent({'orgUnitUid':val});
     },
-	    
+
+    _onApplicationStatusChange: function(val, e){
+      this.setState({
+            applicationStatus: val,
+        });
+    },
+
+  _onDisciplineChange: function(val, e){
+
+          this.setState({
+                discipline: val,
+            });
+        },
+
+                    _onAppDateFromChange: function( val, e){
+                        val = val.format("DD/MM/YYYY");
+                        this.setState({
+                              appDateFrom: val,
+                          });
+                    },
+            _onAppDateToChange: function( val, e){
+                val = val.format("DD/MM/YYYY");
+                this.setState({
+                      appDateTo: val,
+                  });
+            },
     getInitialState: function() {
         return {
             nameSearch: "test",
@@ -62,73 +95,166 @@ var PersonFormSearch = React.createClass({
     },
 
     componentDidMount: function() {
-		
+
         PersonStore.addChangeListener(this._onChange);
-		
+
     },
 	componentWillMount: function(){
         if(this.state.orgUnits.length > 0){
 			this.setState({orgUnitUid: orgUnits[0].value});
-			
+
 		}
 	},
 	componentWillReceiveProps : function(props){
 		var self = this;
-		
+
 		if(self.state.me == null || self.state.me.id != props.me.id){
-			console.log("willreceive");
+
 			//orgUnits
 			$.get("../../../../dhis/api/organisationUnits/" + props.me.organisationUnits[0].id + "?" + _config.orgUnitFieldSearch, function (xml){
-				
+
 				var orgUnits = [];
-				{			
+				{
 					opt = {};
 					opt.value = props.me.organisationUnits[0].id;
 					opt.label = props.me.organisationUnits[0].name;
 
 					orgUnits.push(opt);
 				}
-				var options = xml.children;        
+				var options = xml.children;
 				options.forEach(function(entry) {
 					opt = {};
 					opt.value = entry.id;
 					opt.label = entry.name;
 
 					orgUnits.push(opt);
-					
+
 				});
 
 				self.setState({orgUnits: orgUnits, me: props.me});
-				
+
 				self.setState({orgUnitUid: orgUnits[0].value});
-		
-				
+
+        //applicationStatus
+           $.get("../../../../dhis/api/optionSets/SCj9vq6xzYz?" + _config.optionFieldSearch, function (xml){
+
+               var applicationStatuses = [];
+               var options = xml.options;
+               options.forEach(function(entry) {
+                   applicationStatus = {};
+                   applicationStatus.value = entry.code;
+                   applicationStatus.label = entry.name;
+
+                   applicationStatuses.push(applicationStatus);
+
+               });
+
+               self.setState({applicationStatuses: applicationStatuses});
+
+           });
+
+
+                   //disciplines
+                      $.get("../../../../dhis/api/optionSets/vLyLsFHBomG?" + _config.optionFieldSearch, function (xml){
+
+                          var disciplines = [];
+                          var options = xml.options;
+                          options.forEach(function(entry) {
+                              discipline = {};
+                              discipline.value = entry.code;
+                              discipline.label = entry.name;
+
+                              disciplines.push(discipline);
+
+                          });
+
+                          self.setState({disciplines: disciplines});
+
+                      });
 			});
 		}
 	},
     render: function() {
-        var btnSearch = (<Button bsStyle="default" onClick={this._onClickSearch} disabled={this.state.isLoading}>{this.state.isLoading ? 'loading' : 'Search'}</Button>);
-		//alert(this.props.me);
+        var self = this;
+        var btnSearch = (<Button bsStyle="default" onClick={self._onClickSearch} disabled={self.state.isLoading}>{self.state.isLoading ? 'loading' : 'Search'}</Button>);
+
         return (
                 <div>
                 <div className="row">
                     <div className="col-md-12">
                         <label>OrgUnit</label>
                         <SimpleSelect
-								name="orgUnit"    								     
-								options={this.state.orgUnits}
-								onChange={this._onOrgUnitChange}      
-								value={this.state.orgUnitUid}
-								
+								name="orgUnit"
+								options={self.state.orgUnits}
+								onChange={self._onOrgUnitChange}
+								value={self.state.orgUnitUid}
+
 						></SimpleSelect>
                     </div>
                 </div>
+
+    <div className="row">
+
+      <div className="col-md-12">
+          <label>applicationStatus</label>
+          <SimpleSelect
+              name="applicationStatus"
+              multi={true}
+              delimiter=';'
+              onChange={self._onApplicationStatusChange}
+              options={self.state.applicationStatuses}
+              value={(self.state.applicationStatus == null) ? [] : self.state.applicationStatus}
+          />
+      </div>
+      </div>
+
+    <div className="row">
+
+    <div className="col-md-12">
+        <label>Discipline</label>
+        <SimpleSelect
+            name="Discipline"
+            multi={true}
+            delimiter=';'
+            onChange={self._onDisciplineChange}
+            options={self.state.disciplines}
+            value={(self.state.discipline == null) ? [] : self.state.discipline}
+        />
+    </div>
+    </div>
+
+         <div className="row">
+
+         <div className="col-md-6">
+
+            <label>appDate From</label>
+            <DatePicker className="form-control"
+                bsSize="small"
+                onChange={self._onAppDateFromChange}
+                selected={(self.state.appDateFrom) ? moment(self.state.appDateFrom, "DD/MM/YYYY") : null}
+
+                dateFormat= "DD/MM/YYYY"/>
+
+
+        </div>
+        <div className="col-md-6">
+                 <label>to</label>
+               <DatePicker className="form-control"
+                   bsSize="small"
+                   onChange={self._onAppDateToChange}
+                   selected={(self.state.appDateTo) ? moment(self.state.appDateTo, "DD/MM/YYYY") : null}
+
+                   dateFormat= "DD/MM/YYYY"/>
+        </div>
+        </div>
+
                 <div className="row">
                     <div className="col-md-12">
                         <label>Name</label>
-                        <Input type="text"  bsSize="small"  value={this.state.nameSearch} onChange={this._onChangeName} onKeyDown={this._onKeyDown}  />
+                        <Input type="text"  bsSize="small"  value={self.state.nameSearch} onChange={self._onChangeName} onKeyDown={self._onKeyDown}  />
                     </div>
                 </div>
+
                 <div className="row">
                     <div className="col-md-12">
                         <div  className="pull-right">
@@ -137,8 +263,8 @@ var PersonFormSearch = React.createClass({
                     </div>
                 </div>
                 </div>
-				
- 
+
+
         );
     }
 });

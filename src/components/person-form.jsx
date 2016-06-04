@@ -24,7 +24,7 @@ var attrs = $.parseJSON($.ajax({
     }).responseText);
 var PersonForm = React.createClass({
     _onClickAdd: function() {
-		
+
 		if(this.state.editingPerson.orgUnit == null){
 			this.state.editingPerson.orgUnit = {val: this.props.orgUnitUid};
 		}
@@ -50,7 +50,7 @@ var PersonForm = React.createClass({
         });
     },
     _onSelectChange: function(attr, val, e){
-       
+
         if(this.state.editingPerson == null ){
             this.state.editingPerson = {};
         }
@@ -71,7 +71,7 @@ var PersonForm = React.createClass({
         val = val.format("DD/MM/YYYY");
         console.log("attr = " +attr);
         console.log("val = " +val);
-       
+
         if(this.state.editingPerson == null ){
             this.state.editingPerson = {};
         }
@@ -92,7 +92,7 @@ var PersonForm = React.createClass({
         val = val.format("YYYY-MM-DD");
         console.log("attr = " +attr);
         console.log("val = " +val);
-       
+
         if(this.state.editingPerson == null ){
             this.state.editingPerson = {};
         }
@@ -125,7 +125,7 @@ var PersonForm = React.createClass({
         this.setState({
             editingPerson: this.state.editingPerson,
         });
-        
+
     },
     _onEdit: function() {
         var editingPerson = PersonStore.getEditingPerson();
@@ -152,74 +152,74 @@ var PersonForm = React.createClass({
     // component-will-mount :: a -> Void
     componentWillMount: function(){
         var self = this;
-        
+
         //recensions
         $.get("../../../../dhis/api/optionSets/EBYskOSmXH5?" + _config.optionFieldSearch, function (xml){
-            
+
             var recensions = [];
-            var options = xml.options;        
+            var options = xml.options;
             options.forEach(function(entry) {
                 recension = {};
                 recension.value = entry.code;
                 recension.label = entry.name;
 
                 recensions.push(recension);
-                
+
             });
 
             self.setState({recensions: recensions});
-            
+
         });
         //applicationType
         $.get("../../../../dhis/api/optionSets/FQS1S2NwFyC?" + _config.optionFieldSearch, function (xml){
-            
+
             var applicationTypes = [];
-            var options = xml.options;        
+            var options = xml.options;
             options.forEach(function(entry) {
                 applicationType = {};
                 applicationType.value = entry.code;
                 applicationType.label = entry.name;
 
                 applicationTypes.push(applicationType);
-                
+
             });
 
             self.setState({applicationTypes: applicationTypes});
-            
+
         });
 		 //applicationStatus
         $.get("../../../../dhis/api/optionSets/SCj9vq6xzYz?" + _config.optionFieldSearch, function (xml){
-            
+
             var applicationStatuses = [];
-            var options = xml.options;        
+            var options = xml.options;
             options.forEach(function(entry) {
                 applicationStatus = {};
                 applicationStatus.value = entry.code;
                 applicationStatus.label = entry.name;
 
                 applicationStatuses.push(applicationStatus);
-                
+
             });
 
             self.setState({applicationStatuses: applicationStatuses});
-            
+
         });
         //disciplines
         $.get("../../../../dhis/api/optionSets/vLyLsFHBomG?" + _config.optionFieldSearch, function (xml){
-            
+
             var disciplines = [];
-            var options = xml.options;        
+            var options = xml.options;
             options.forEach(function(entry) {
                 discipline = {};
                 discipline.value = entry.code;
                 discipline.label = entry.name;
 
                 disciplines.push(discipline);
-                
+
             });
 
             self.setState({disciplines: disciplines});
-            
+
         });
         //nationality
         $.getJSON("data/countries.json").done(function(nationalities){
@@ -229,12 +229,12 @@ var PersonForm = React.createClass({
 
         self.setState(
             {
-                genders: 
+                genders:
                 [
-                    {value: '19933', label: 'Female'}, 
+                    {value: '19933', label: 'Female'},
                     {value: '19934', label: 'Male'},
                 ],
-                                
+
 
             }
         );
@@ -246,7 +246,7 @@ var PersonForm = React.createClass({
         var self = this;
         var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
         var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
-        
+
         return (
             <form className="form">
             <div className="row">
@@ -254,7 +254,7 @@ var PersonForm = React.createClass({
                 <div className="col-md-4">
                     <label>hospitalCode</label>
                     <Input type="text" bsSize="small"
-                        
+
                         onChange={self._onChange.bind(this, 'hospitalCode')}
                         value={(self.state.editingPerson == null ||  self.state.editingPerson.hospitalCode == null) ? "" : self.state.editingPerson.hospitalCode.value}  />
 
@@ -262,7 +262,7 @@ var PersonForm = React.createClass({
 
                 <div className="col-md-4">
                 <label>appCode</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'appCode')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.appCode == null) ? "" : self.state.editingPerson.appCode.value }  />
                 </div>
@@ -291,21 +291,21 @@ var PersonForm = React.createClass({
                         onChange={self._onSelectChange.bind(this, "discipline")}
                         value={(self.state.editingPerson == null ||  self.state.editingPerson.discipline == null) ? "" : self.state.editingPerson.discipline.value}
                         options={self.state.disciplines}
-                
+
                     />
-          
- 
+
+
                 </div>
 
                 <div className="col-md-4 form-group-sm">
                     <label>applicationType*</label>
                     <SimpleSelect
-                        name="applicationType"    
-                        onChange={self._onSelectChange.bind(this, "applicationType")}                    
+                        name="applicationType"
+                        onChange={self._onSelectChange.bind(this, "applicationType")}
                         options={self.state.applicationTypes}
                         value={(self.state.editingPerson == null ||  self.state.editingPerson.applicationType == null) ? "" : self.state.editingPerson.applicationType.value}
-                       
-                
+
+
                     />
                 </div>
 
@@ -316,20 +316,20 @@ var PersonForm = React.createClass({
 
                 <div className="col-md-4">
                     <label>recipientName</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'recipientName')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.recipientName == null) ? "" : self.state.editingPerson.recipientName.value}/>
-                
+
                 </div>
                 <div className="col-md-4">
                     <label>recipientPosition</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'recipientPosition')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.recipientPosition == null) ? "" : self.state.editingPerson.recipientPosition.value}/>
                 </div>
                 <div className="col-md-4">
                     <label>IssuedPlace</label>
-                    <Input type="text" bsSize="small"  
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'lblIssuedPlace')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.lblIssuedPlace == null) ? "" : self.state.editingPerson.lblIssuedPlace.value}/>
                 </div>
@@ -339,19 +339,19 @@ var PersonForm = React.createClass({
 
                 <div className="col-md-4">
                     <label>procesedBy</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'procesedBy')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.procesedBy == null) ? "" : self.state.editingPerson.procesedBy.value}/>
                 </div>
                 <div className="col-md-4 form-group-sm">
                     <label>recension*</label>
                     <SimpleSelect
-                        name="recension"    
-                        onChange={self._onSelectChange.bind(this, "recension")}                    
+                        name="recension"
+                        onChange={self._onSelectChange.bind(this, "recension")}
                         options={self.state.recensions}
                         value={(self.state.editingPerson == null ||  self.state.editingPerson.recension == null) ? "" : self.state.editingPerson.recension.value}
-                       
-                
+
+
                     />
                 </div>
                 <div className="col-md-4">
@@ -363,8 +363,8 @@ var PersonForm = React.createClass({
 
                 <div className="col-md-4">
                     <label>firstName*</label>
-                    <Input type="text" bsSize="small" 
-                        value={(self.state.editingPerson == null ||  self.state.editingPerson.firstName == null) ? "" : self.state.editingPerson.firstName.value} 
+                    <Input type="text" bsSize="small"
+                        value={(self.state.editingPerson == null ||  self.state.editingPerson.firstName == null) ? "" : self.state.editingPerson.firstName.value}
                         onChange={self._onChange.bind(this, 'firstName')} />
                 </div>
                 <div className="col-md-4 form-group-sm">
@@ -383,7 +383,7 @@ var PersonForm = React.createClass({
                         dateFormat= "DD/MM/YYYY"
                         onChange={self._onDatePickerChange.bind(this, "birthday")}
                         selected={(self.state.editingPerson && self.state.editingPerson.birthday) ? moment(self.state.editingPerson.birthday.value, "DD/MM/YYYY") : null}
-                        
+
                     />
                 </div>
             </div>
@@ -392,10 +392,10 @@ var PersonForm = React.createClass({
 
                 <div className="col-md-4">
                     <label>BirthPlace</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'birthdayPlace')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.birthdayPlace == null) ? "" : self.state.editingPerson.birthdayPlace.value}/>
-                
+
                 </div>
                 <div className="col-md-4 form-group-sm">
                     <label>nationlityText</label>
@@ -408,20 +408,20 @@ var PersonForm = React.createClass({
                 </div>
                 <div className="col-md-4">
                     <label>ethnicText</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'ethnicText')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.ethnicText == null) ? "" : self.state.editingPerson.ethnicText.value}/>
-                
+
                 </div>
 
             </div>
             <div className="row">
                 <div className="col-md-4">
                     <label>peopleIndentity</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'peopleIndentity')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.peopleIndentity == null) ? "" : self.state.editingPerson.peopleIndentity.value}/>
-                
+
                 </div>
                 <div className="col-md-4 form-group-sm">
                     <label>idIssuedDate</label>
@@ -431,52 +431,52 @@ var PersonForm = React.createClass({
                         selected={(self.state.editingPerson && self.state.editingPerson.idIssuedDate) ? moment(self.state.editingPerson.idIssuedDate.value, "YYYY-MM-DD") : null}
                     ></DatePicker>
 
-                
+
                 </div>
                 <div className="col-md-4">
                     <label>idIssuedPlaceText</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'idIssuedPlaceText')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.idIssuedPlaceText == null) ? "" : self.state.editingPerson.idIssuedPlaceText.value}/>
-                
+
                 </div>
             </div>
             <div className="row">
 
                 <div className="col-md-4">
                     <label>tempAddress</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'tempAddress')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.tempAddress == null) ? "" : self.state.editingPerson.tempAddress.value}/>
-                
+
                 </div>
                 <div className="col-md-4">
                     <label>tempProvince</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'tempProvince')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.tempProvince == null) ? "" : self.state.editingPerson.tempProvince.value}/>
-                
+
                 </div>
                 <div className="col-md-4">
                     <label>tempDistrict</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'tempDistrict')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.tempDistrict == null) ? "" : self.state.editingPerson.tempDistrict.value}/>
-                
+
                 </div>
             </div>
             <div className="row">
                 <div className="col-md-4">
                     <label>tempWard</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'tempWard')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.tempWard == null) ? "" : self.state.editingPerson.tempWard.value}/>
-                
+
                 </div>
 
                 <div className="col-md-4">
                     <label>email</label>
-                    <Input type="text" bsSize="small" 
+                    <Input type="text" bsSize="small"
                     onChange={self._onChange.bind(this, 'email')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.email == null) ? "" : self.state.editingPerson.email.value}/>
                 </div>
@@ -486,29 +486,29 @@ var PersonForm = React.createClass({
                     onChange={self._onChange.bind(this, 'mobilePhone')}
                     value={(self.state.editingPerson == null ||  self.state.editingPerson.mobilePhone == null) ? "" : self.state.editingPerson.mobilePhone.value}/>
                 </div>
-				
-				
+
+
                 <div className="col-md-4 form-group-sm">
                     <label>applicationStatus</label>
                     <SimpleSelect
-                        name="applicationStatus"    
-                        onChange={self._onSelectChange.bind(this, "applicationStatus")}                    
+                        name="applicationStatus"
+                        onChange={self._onSelectChange.bind(this, "applicationStatus")}
                         options={self.state.applicationStatuses}
                         value={(self.state.editingPerson == null ||  self.state.editingPerson.applicationStatus == null) ? "" : self.state.editingPerson.applicationStatus.value}
-                       
-                
+
+
                     />
                 </div>
             </div>
 
 
-          
+
             <div className="row">
                 <div className="col-md-12 pull-right">
                     {self.state.editingPersonUid ? btnUpdate : btnAdd}
-                    <div  className="pull-right">                    
-                        <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>                
-                    
+                    <div  className="pull-right">
+                        <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
+
                     </div>
                 </div>
             </div>
