@@ -233,10 +233,10 @@ var RecensionDetailForm = React.createClass({
                 <div className="col-md-12">
                     
                     <div  className="pull-left">
-                    <Button bsStyle="default" onClick={self._onClickAddForm}><Glyphicon glyph="plus" /> Add Person</Button>
+                    <Button bsStyle="sm" onClick={self._onClickAddForm}><Glyphicon glyph="plus" /> Add Person</Button>
                     </div>
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClose}>Exit <Glyphicon glyph="log-out" /></Button>
+                    <Button bsStyle="sm" onClick={self._onClickClose}>Exit <Glyphicon glyph="log-out" /></Button>
                     </div>
                 </div>
             </div>

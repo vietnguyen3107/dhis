@@ -53,7 +53,9 @@ function _searchRecension(recension, callback) {
         if(typeof rows !== "undefined" && rows.length > 0){
 
             rows.forEach(function(entry) {
+
                 var _p = {};
+                var pushYN = false;
                 _p.uid = {value:entry.id};
                 _p.code = {value:entry.code};
                 _p.name = {value:entry.name};
@@ -64,9 +66,13 @@ function _searchRecension(recension, callback) {
 						var val = {value: attrValue.value, uid: attrValue.attribute.id, code: attrValue.attribute.code};
                         _p[attrValue.attribute.code] = val;
                         i++;
+                        if(attrValue.attribute.code =='OrgUnitUID' && attrValue.value == recension.OrgUnitUID){
+                        	pushYN = true;
+                        }
                     });
                 }
-                _recensions.push(_p);
+                if(pushYN)
+                	_recensions.push(_p);
                
 
             });
@@ -80,6 +86,40 @@ function _searchRecension(recension, callback) {
        
 }
 
+
+function _bindRecensionToOptionSet(callback){
+	var o = {};
+	o.optionSets = [{id:_config.recensionUid, name: 'recension'}];
+
+var opts = [];
+	_recensions.forEach(function(entry) {
+		var opt = {};
+		opt.id= entry.uid.value;
+
+		opts.push(opt);
+	});
+	o.optionSets[0].options = opts;
+
+	$.ajax({
+        url: _queryURL_api + '23/metadata',
+        type: 'POST',
+        data: JSON.stringify(o),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        traditional: true,
+        success: function(response) {
+            	console.log(response);
+		
+                if (typeof callback === "function") {
+                    
+                    callback();
+                }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status + ":" + thrownError + ajaxOptions);
+        }
+    });
+}
 function _addRecension(obj, callback){
     var o = {};
 	o.code = obj.code.value;
@@ -113,10 +153,7 @@ function _addRecension(obj, callback){
 				obj.uid = {value:response.response.lastImported};
 				_recensions.push(obj);
 		
-                if (typeof callback === "function") {
-                    
-                    callback();
-                }
+                _bindRecensionToOptionSet(callback);
 
             }else{
                 alert(response.response.status);

@@ -24,8 +24,6 @@ var ReceptionMain = React.createClass({
         })
     },
 	_onChildChanged: function(newState) {
-		console.log("ne state");
-		console.log(newState);
         this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {
@@ -45,7 +43,7 @@ var ReceptionMain = React.createClass({
 
         //me
         $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
-            self.setState({me: json});
+            self.setState({me: json, orgUnitUid: json.organisationUnits[0].id});
 
         });
 		//PersonActions.searchPerson({firstName: 'test'});

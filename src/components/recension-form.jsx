@@ -21,10 +21,20 @@ var RecensionActions = require("../actions/recension-actions");
     }).responseText);
 	
 var RecensionForm = React.createClass({
-    _onClickAdd: function() {        
+    _onClickAdd: function() {      
+        this.setState({
+            isLoading: true
+        }); 
+
+        this.state.editingRecension['OrgUnitUID'] = {};
+        this.state.editingRecension['OrgUnitUID'].value = this.state.me.organisationUnits[0].id;
+        this.state.editingRecension['OrgUnitUID'].uid = this.state.attrs['OrgUnitUID'];
         RecensionActions.addRecension(this.state.editingRecension);
     },
     _onClickUpdate: function() {
+        this.setState({
+            isLoading: true
+        });
         RecensionActions.updateRecension(this.state.editingRecension);
     }, 
     _onClickClear: function() {
@@ -48,8 +58,6 @@ var RecensionForm = React.createClass({
             this.state.editingRecension[attr].value = val;
         }
 
-        console.log(this.state.editingRecension);
-
 
     },
 
@@ -67,8 +75,6 @@ var RecensionForm = React.createClass({
         }else{
             this.state.editingRecension[attr].value = val;
         }
-
-        console.log(this.state.editingRecension);
 
 
     },
@@ -95,6 +101,7 @@ var RecensionForm = React.createClass({
 
         if(editingRecension  ){
             this.setState({
+                isLoading : false,
                 editingRecension: editingRecension,
                 editingRecensionUid: editingRecension.uid.value
             });
@@ -123,7 +130,12 @@ var RecensionForm = React.createClass({
     // component-will-mount :: a -> Void
     componentWillMount: function(){
         var self = this;
-
+       
+        //me
+        $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
+            self.setState({me: json});
+            
+        });
         $.get("./data/recensionAttributes.json", function (json){
             self.setState({attrs: json});
             
@@ -150,8 +162,8 @@ var RecensionForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Createing...' : 'Create'}</Button>  );
+        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
         
         return (
             <form className="form" style={self.props.showStatus != "form" ? self.state.hide : {}}>
@@ -319,7 +331,7 @@ var RecensionForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingRecensionUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
+                    <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

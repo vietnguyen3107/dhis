@@ -45,7 +45,7 @@ var Main = React.createClass({
        
         //me
         $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
-            self.setState({me: json});
+            self.setState({me: json, orgUnitUid: json.organisationUnits[0].id});
             
         });
 		//PersonActions.searchPerson({firstName: 'test'});
@@ -152,7 +152,7 @@ var Main = React.createClass({
 			</div>
 			<div className='row'>
 				<div className="panel panel-default">
-					<div className="panel-body">  <img src='images/dhis2.jpg'/></div>
+					<div className="panel-body">  <img src='images/HISPVN.png' height='50px'/></div>
 				</div>
 			</div>
 		</div>

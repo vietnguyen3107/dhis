@@ -328,7 +328,7 @@ var EducationForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingEducationUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
+                    <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

@@ -14,10 +14,11 @@ var PersonList = React.createClass({
                     <td>{(person && person.firstName) ? person.firstName.value : ""}</td>
                     <td>{(person && person.birthday) ? person.birthday.value : ""}</td>
                     <td>
+
 						<Button  bsSize="xsmall" onClick={PersonActions.editPerson.bind(null, index)}><Glyphicon glyph="edit" /></Button>
-						&nbsp;
-						&nbsp;
+						|
 						<Button  bsSize="xsmall"  onClick={PersonActions.removePerson.bind(null, index)}><Glyphicon glyph="remove" /></Button>
+
                     </td>
 
                 </tr>

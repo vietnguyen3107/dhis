@@ -25,19 +25,30 @@ var attrs = $.parseJSON($.ajax({
 var PersonForm = React.createClass({
     _onClickAdd: function() {
 
-		if(this.state.editingPerson.orgUnit == null){
-			this.state.editingPerson.orgUnit = {val: this.props.orgUnitUid};
+        this.setState({
+            isLoading: true
+        });
+
+		if(this.state.editingPerson.orgUnit == null || typeof this.state.editingPerson.orgUnit === undefined){
+			this.state.editingPerson.orgUnit = {value: this.props.orgUnitUid};
 		}
+
         PersonActions.addPerson(this.state.editingPerson);
 
     },
     _onClickUpdate: function() {
+
+        this.setState({
+            isLoading: true
+        });
         var editingPerson = this.state.editingPerson;
         PersonActions.updatePerson(editingPerson);
     },
     _onClickClear: function() {
+        console.log(this.props.orgUnitUid);
         PersonActions.clearPerson();
         this.setState({
+            isLoading : false,
             editingPerson: null,
             editingPersonUid: null
         });
@@ -127,10 +138,13 @@ var PersonForm = React.createClass({
         });
 
     },
+
     _onEdit: function() {
         var editingPerson = PersonStore.getEditingPerson();
 		if (this.isMounted()) {
         this.setState({
+
+            isLoading: false,
             editingPerson: editingPerson,
             editingPersonUid: editingPerson.instance.value
         });
@@ -145,6 +159,9 @@ var PersonForm = React.createClass({
             disciplines: [],
             applicationTypes: [],
         }
+    },
+    componentWillReceiveProps: function(nextProps) {
+      console.log(nextProps.orgUnitUid);
     },
     componentDidMount: function() {
         PersonStore.addEditPersonListener(this._onEdit);
@@ -240,12 +257,11 @@ var PersonForm = React.createClass({
         );
     },
 	componentWillUnmount: function(){
-		console.log("test unmoiunt");
 	},
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Adding...' : 'Add'}</Button>  );
+        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
 
         return (
             <form className="form">
@@ -507,7 +523,7 @@ var PersonForm = React.createClass({
                 <div className="col-md-12 pull-right">
                     {self.state.editingPersonUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                        <Button bsStyle="default" onClick={self._onClickClear}>Clear</Button>
+                        <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
 
                     </div>
                 </div>

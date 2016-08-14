@@ -41,8 +41,11 @@ function _addPerson(person, callback) {
     instance.trackedEntity = _config.trackedEntityUid;
     //instance.orgUnit = "qjoyPJWgSou";
 
-	if(person.OrgUnit == null){
+	if(person.orgUnit == null || typeof person.orgUnit === undefined){
 		alert("OrgUnit must be not null");
+        if (typeof callback === "function") {
+            callback();
+        }
 		return;
 	}
     instance.orgUnit = person.orgUnit.value;
@@ -60,8 +63,8 @@ function _addPerson(person, callback) {
 
     instance.attributes = attributes;
 
-    //console.log(instance);
-    // return false;
+    console.log(instance);
+    //return false;
 
     // PUT data
     $.ajax({
@@ -77,6 +80,8 @@ function _addPerson(person, callback) {
                 person.trackedEntityInstance = {value: response.reference};
                 if (typeof callback === "function") {
                     _persons.push(person);
+
+                    _editingIndex = _persons.length - 1;
                     callback();
                 }
 
@@ -84,6 +89,10 @@ function _addPerson(person, callback) {
         },
         error: function (xhr, ajaxOptions, thrownError) {
             alert(xhr.status + ":" + thrownError + ajaxOptions);
+
+            if (typeof callback === "function") {
+                callback();
+            }
         }
     });
 
@@ -317,6 +326,9 @@ function _searchPerson(person, callback) {
 					conditionSearch += "&ou=" + person.orgUnitUid;
           if(person.applicationStatus != null && person.applicationStatus != ""){
             conditionSearch += "&filter=GvDIApK7R0j:IN:" + person.applicationStatus;
+          }
+          if(person.discipline != null && person.discipline != ""){
+            conditionSearch += "&filter=KuoPvulbl3f:IN:" + person.discipline;
           }
           if(person.appDateFrom != null && person.appDateFrom != ""){
             conditionSearch += "&created>=" + person.appDateFrom;

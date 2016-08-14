@@ -8,6 +8,8 @@ var Glyphicon = require("react-bootstrap").Glyphicon;
 var PersonList = React.createClass({
     render: function() {
 		var recension = this.props.recension;
+
+
         var personList = this.props.persons.map(function(person, index) {
             return (
                 <tr key={index}>
@@ -16,8 +18,8 @@ var PersonList = React.createClass({
                     <td>{(person && person.birthday) ? person.birthday.value : ""}</td>
                     <td>{(person && person.recension) ? person.recension.value : ""}</td>
                     <td>
-					{(person.recension && person.recension.value == recension.code.value) ?
-					 <Glyphicon glyph="ok" />:
+					{(person.recension) ?
+					  ( (person.recension.value == recension.code.value) ? <Glyphicon glyph="ok" /> : '' ) :
 					<input type="button" value="Add Recension" className="btn btn-success btn-xs" onClick={PersonActions.addPersonToRecension.bind(null, index, recension)} />
 					}
                     </td>

@@ -36,12 +36,27 @@ var RecensionPanel = React.createClass({
         return {
 			showStatus : 'form',
             recensions: [],
+            me:{}
         }
+    },
+    // component-will-mount :: a -> Void
+    componentWillMount: function(){
+        var self = this;
+       
+      
     },
     componentDidMount: function() {
         RecensionStore.addChangeListener(this._onChange);
 		RecensionStore.addEditListener(this._onEdit);
-		RecensionActions.searchRecension({code:'123'});
+          //me
+        $.get("../../../../dhis/api/me.json?fields=*,organisationUnits[id,name,shortName,displayName]", function (json){
+            RecensionActions.searchRecension({OrgUnitUID: json.organisationUnits[0].id});
+            
+
+        });
+    },
+    componentDidUpdate: function() {
+        
     },
     render: function() {
         var self = this;

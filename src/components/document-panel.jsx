@@ -20,7 +20,6 @@ var DocumentPanel = React.createClass({
 			});
 		}
 		
-		console.log(this.state.documents);
     },
     getInitialState: function() {
         return {

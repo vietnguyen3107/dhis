@@ -9,12 +9,15 @@ var SimpleSelect = require('react-select');
 var DatePicker = require("react-datepicker");
 var moment = require("moment");
 
-    var _config = $.parseJSON($.ajax({
+var Transition = require("react-overlays").Transition;
+
+var _config = $.parseJSON($.ajax({
         type: "GET",
         dataType: "json",
         url: "./data/config.json",
         async: false
     }).responseText);
+
 
 var PersonFormSearch = React.createClass({
     _onClickSearch: function() {
@@ -46,17 +49,17 @@ var PersonFormSearch = React.createClass({
 	_onChange: function(e) {
 
 		if (this.isMounted()) {
-		this.setState({
-            isLoading: false
-        });
-		}
+  		this.setState({
+              isLoading: false
+          });
+  		}
     },
 	_onOrgUnitChange: function(val, e){
 		//alert(this.props.me.organisationUnits[0].id);
 		this.setState({
             orgUnitUid: val,
         });
-		this.props.callbackParent({'orgUnitUid':val});
+		this.props.callbackParent(this.state);
     },
 
     _onApplicationStatusChange: function(val, e){
@@ -174,11 +177,22 @@ var PersonFormSearch = React.createClass({
 			});
 		}
 	},
+
+
     render: function() {
         var self = this;
-        var btnSearch = (<Button bsStyle="default" onClick={self._onClickSearch} disabled={self.state.isLoading}>{self.state.isLoading ? 'loading' : 'Search'}</Button>);
+        var btnSearch;
+
+        if(self.state.isLoading){
+             btnSearch = (<Button bsStyle="sm" ><img src="images/fb_loading.gif" height="18px"/> Searching...</Button>);
+        }else
+        {
+        btnSearch = (<Button bsStyle="sm" onClick={self._onClickSearch} >Search</Button>);
+
+        }
 
         return (
+
                 <div>
                 <div className="row">
                     <div className="col-md-12">
@@ -258,12 +272,12 @@ var PersonFormSearch = React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <div  className="pull-right">
+                            
                             {btnSearch}
                         </div>
                     </div>
                 </div>
                 </div>
-
 
         );
     }
