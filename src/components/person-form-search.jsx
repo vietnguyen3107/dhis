@@ -3,7 +3,9 @@ var React = require("react"),
     PersonActions = require("../actions/person-actions"),
 	Global = require('react-global');
 
+var Pagination = require("react-bootstrap").Pagination;
 var Button = require("react-bootstrap").Button;
+var Glyphicon = require("react-bootstrap").Glyphicon;
 var Input = require("react-bootstrap").Input;
 var SimpleSelect = require('react-select');
 var DatePicker = require("react-datepicker");
@@ -21,17 +23,29 @@ var _config = $.parseJSON($.ajax({
 
 var PersonFormSearch = React.createClass({
     _onClickSearch: function() {
-		this.setState({
-			isLoading: true
-		});
-        PersonActions.searchPerson({firstName: this.state.nameSearch
-            ,orgUnitUid: this.state.orgUnitUid
-            ,applicationStatus : this.state.applicationStatus
-            ,discipline : this.state.discipline
-            , appDateFrom : this.state.appDateFrom
-            , appDateTo : this.state.appDateTo
-        });
+      this.search(1);
     },
+
+    search: function(page){
+       this.setState({
+        isLoading: true
+      });
+          PersonActions.searchPerson({
+              page: page
+              ,firstName: this.state.nameSearch
+              ,orgUnitUid: this.state.orgUnitUid
+              ,applicationStatus : this.state.applicationStatus
+              ,discipline : this.state.discipline
+              , appDateFrom : this.state.appDateFrom
+              , appDateTo : this.state.appDateTo
+          });
+    },
+
+    _onClickPagination: function(eventKey, event) {
+      console.log(event.eventKey);
+      this.search(event.eventKey);
+    },
+
 
     _onChangeName: function(e) {
         this.setState({
@@ -57,15 +71,21 @@ var PersonFormSearch = React.createClass({
 	_onOrgUnitChange: function(val, e){
 		//alert(this.props.me.organisationUnits[0].id);
 		this.setState({
-            orgUnitUid: val,
-        });
-		this.props.callbackParent(this.state);
+            orgUnitUid: val
+        }
+        , function () {
+          this.props.callbackParent(this.state);
+          this._onClickSearch();
+        }
+    );
+
     },
 
     _onApplicationStatusChange: function(val, e){
       this.setState({
             applicationStatus: val,
-        });
+        }
+      );
     },
 
   _onDisciplineChange: function(val, e){
@@ -101,6 +121,7 @@ var PersonFormSearch = React.createClass({
 
         PersonStore.addChangeListener(this._onChange);
 
+
     },
 	componentWillMount: function(){
         if(this.state.orgUnits.length > 0){
@@ -110,6 +131,8 @@ var PersonFormSearch = React.createClass({
 	},
 	componentWillReceiveProps : function(props){
 		var self = this;
+
+    self.setState({pager: props.pager});
 
 		if(self.state.me == null || self.state.me.id != props.me.id){
 
@@ -134,9 +157,17 @@ var PersonFormSearch = React.createClass({
 
 				});
 
-				self.setState({orgUnits: orgUnits, me: props.me});
+				self.setState({orgUnits: orgUnits, me: props.me, pager: props.pager});
 
-				self.setState({orgUnitUid: orgUnits[0].value});
+				self.setState(
+          {
+            orgUnitUid: orgUnits[0].value
+          }
+          ,function(){
+            this._onClickSearch();
+
+          }
+        );
 
         //applicationStatus
            $.get("../../../../dhis/api/optionSets/SCj9vq6xzYz?" + _config.optionFieldSearch, function (xml){
@@ -184,12 +215,12 @@ var PersonFormSearch = React.createClass({
         var btnSearch;
 
         if(self.state.isLoading){
-             btnSearch = (<Button bsStyle="sm" ><img src="images/fb_loading.gif" height="18px"/> Searching...</Button>);
+             btnSearch = (<Button bsStyle="primary" bsSize="sm" disabled  block><img src="images/fb_loading.gif" height="18px"/> Searching...</Button>);
         }else
         {
-        btnSearch = (<Button bsStyle="sm" onClick={self._onClickSearch} >Search</Button>);
-
+        btnSearch = (<Button bsStyle="default" bsSize="sm"  block onClick={self._onClickSearch} >Search</Button>);
         }
+       
 
         return (
 
@@ -239,7 +270,7 @@ var PersonFormSearch = React.createClass({
 
          <div className="row">
 
-         <div className="col-md-6">
+         <div className="col-md-6  form-group-sm">
 
             <label>appDate From</label>
             <DatePicker className="form-control"
@@ -251,7 +282,7 @@ var PersonFormSearch = React.createClass({
 
 
         </div>
-        <div className="col-md-6">
+        <div className="col-md-6  form-group-sm">
                  <label>to</label>
                <DatePicker className="form-control"
                    bsSize="small"
@@ -268,16 +299,29 @@ var PersonFormSearch = React.createClass({
                         <Input type="text"  bsSize="small"  value={self.state.nameSearch} onChange={self._onChangeName} onKeyDown={self._onKeyDown}  />
                     </div>
                 </div>
+                <div className="row">
+  
+                    <div className="col-md-12">
+                            {btnSearch}
+                    </div>
+                </div>
 
                 <div className="row">
                     <div className="col-md-12">
-                        <div  className="pull-right">
-                            
-                            {btnSearch}
-                        </div>
+                    <Pagination
+                            prev={<span>&larr;</span>}
+                            next={<span>&rarr;</span>}
+                            first={'First'}
+                            last={'Last'}
+                            ellipsis={false}
+                            boundaryLinks
+                            items={(self.state.pager) ? self.state.pager.pageCount : 1}
+                            maxButtons={3}
+                            activePage={(self.state.pager) ? self.state.pager.page : 1}
+                            onSelect={self._onClickPagination} />
                     </div>
                 </div>
-                </div>
+        </div>
 
         );
     }

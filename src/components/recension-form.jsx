@@ -162,8 +162,8 @@ var RecensionForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Createing...' : 'Create'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Createing...' : 'Create'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
         
         return (
             <form className="form" style={self.props.showStatus != "form" ? self.state.hide : {}}>
@@ -331,7 +331,7 @@ var RecensionForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingRecensionUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
+                    <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

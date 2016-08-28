@@ -9,6 +9,7 @@ var CHANGE_EVENT = 'person_change';
 var CHANGE_EDIT_EVENT = 'person_change_edit';
 
 var _persons = [];
+var _pager = {};
 var _personByRecensions = [];
 var _editingIndex = -1;
 
@@ -63,7 +64,7 @@ function _addPerson(person, callback) {
 
     instance.attributes = attributes;
 
-    console.log(instance);
+    //console.log(instance);
     //return false;
 
     // PUT data
@@ -75,12 +76,15 @@ function _addPerson(person, callback) {
         dataType: "json",
         traditional: true,
         success: function(response) {
-            if(response.status == "SUCCESS"){
-                person.instance = {value: response.reference};
-                person.trackedEntityInstance = {value: response.reference};
+            if(response.response.status == "SUCCESS"){
+                person.instance = {value: response.response.reference};
+                person.trackedEntityInstance = {value: response.response.reference};
+                person.trackedEntity = {value: _config.trackedEntityUid};
                 if (typeof callback === "function") {
+                    //console.log(_persons.length);
                     _persons.push(person);
 
+                    //console.log(_persons.length);
                     _editingIndex = _persons.length - 1;
                     callback();
                 }
@@ -137,8 +141,8 @@ function _editPerson(index, callback) {
 function _updatePerson(person, callback) {
     var instance = {};
 
-    console.log("editPerson");
-    console.log(person);
+    //console.log("editPerson");
+    //console.log(person);
     instance.trackedEntity = person.trackedEntity.value;
     instance.orgUnit = person.orgUnit.value;
     var attributes = [];
@@ -215,7 +219,7 @@ function _updatePerson(person, callback) {
 function _updateListPerson(persons, callback) {
 
 
-    console.log("update list");
+    //console.log("update list");
 	var list = [];
 
 	persons.forEach(function(person){
@@ -291,8 +295,8 @@ function _addPersonToRecension(index, recension, callback) {
     });
 
     instance.attributes = attributes;
-	console.log("add to recension ");
-	console.log(instance);
+	//console.log("add to recension ");
+	//console.log(instance);
     // PUT data
     $.ajax({
         url: _queryURL_api + 'trackedEntityInstances/' + person.instance.value,
@@ -319,27 +323,29 @@ function _addPersonToRecension(index, recension, callback) {
 
 function _searchPerson(person, callback) {
     var conditionSearch = "&pageSize=20";
-            if(person != null  ){
-				if(person.firstName != "")
+        if(person != null  ){
+            if(person.page != null && person.page != 0)
+                conditionSearch += "&page=" + person.page;
+			if(person.firstName != "")
 					conditionSearch += "&filter=vSS6J7ALd24:LIKE:" + person.firstName;
-				if(person.orgUnitUid != "")
+			if(person.orgUnitUid != "")
 					conditionSearch += "&ou=" + person.orgUnitUid;
-          if(person.applicationStatus != null && person.applicationStatus != ""){
-            conditionSearch += "&filter=GvDIApK7R0j:IN:" + person.applicationStatus;
-          }
-          if(person.discipline != null && person.discipline != ""){
-            conditionSearch += "&filter=KuoPvulbl3f:IN:" + person.discipline;
-          }
-          if(person.appDateFrom != null && person.appDateFrom != ""){
-            conditionSearch += "&created>=" + person.appDateFrom;
-          }
-          
-
-			}
+            if(person.applicationStatus != null && person.applicationStatus != ""){
+                conditionSearch += "&filter=GvDIApK7R0j:IN:" + person.applicationStatus;
+            }
+            if(person.discipline != null && person.discipline != ""){
+                conditionSearch += "&filter=KuoPvulbl3f:IN:" + person.discipline;
+            }
+            if(person.appDateFrom != null && person.appDateFrom != ""){
+                conditionSearch += "&created>=" + person.appDateFrom;
+            }
+		}
 
 
-    $.get(_queryURL_api + "trackedEntityInstances.json?" + conditionSearch, function (json){
+    $.get(_queryURL_api + "trackedEntityInstances.json?totalPages=true&" + conditionSearch, function (json){
         //paging    //-------start paging----------------
+        _pager = json.pager;
+        //console.log(_pager);
 
         var rows = json.trackedEntityInstances;
         _persons.splice(0, _persons.length);
@@ -364,8 +370,8 @@ function _searchPerson(person, callback) {
 
             _persons.push(person);
         });
-				callback();
-			});
+		callback();
+	});
 }
 
 function _searchPersonByRecension(person, callback) {
@@ -441,6 +447,9 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
     getPersons: function() {
         return _persons;
     },
+    getPager: function() {
+        return _pager;
+    },
 	getPersonByRecensions: function() {
         return _personByRecensions;
     },
@@ -453,6 +462,7 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
     },
 
     getEditingPerson: function() {
+        console.log(_editingIndex);
         if (_editingIndex < 0) {
             return null;
         }
@@ -483,7 +493,11 @@ var PersonStore  = _.extend(EventEmitter.prototype, {
 AppDispatcher.register(function(payload) {
     switch (payload.action) {
         case PersonConstants.ACTION_ADD:
-            _addPerson(payload.person,function(){PersonStore.emitChange();});
+            _addPerson(payload.person,function(){
+                PersonStore.emitEditPerson();
+
+                PersonStore.emitChange();
+            });
             break;
 
         case PersonConstants.ACTION_REMOVE:

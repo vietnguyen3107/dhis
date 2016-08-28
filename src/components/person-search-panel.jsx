@@ -9,10 +9,12 @@ var I18n = require("i18n-js");
 
 var PersonSearchPanel = React.createClass({
     _onChange: function() {
-	
+		console.log("searchpanel");
+		console.log(PersonStore.getPager());
 		if (this.isMounted()) {
 			this.setState({
 				persons: PersonStore.getPersons(),
+            	pager: PersonStore.getPager()
 			})
         }
     },
@@ -24,6 +26,7 @@ var PersonSearchPanel = React.createClass({
     	
         return {
             persons: PersonStore.getPersons(),
+            pager: PersonStore.getPager(),
 			me: [],
 			orgUnitUid: ""
         }
@@ -58,7 +61,7 @@ var PersonSearchPanel = React.createClass({
 						<div className="panel-body">
 							<div className="row">
 								<div className="col-md-12">
-								<PersonFormSearch me={this.state.me} callbackParent={this._onChildChanged}/>
+								<PersonFormSearch me={this.state.me} pager={this.state.pager} callbackParent={this._onChildChanged}/>
 								</div>
 							</div>
 

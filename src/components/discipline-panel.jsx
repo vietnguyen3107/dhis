@@ -20,7 +20,7 @@ var DisciplinePanel = React.createClass({
 			});
 		}
 		
-		console.log(this.state.disciplines);
+		//console.log(this.state.disciplines);
     },
     getInitialState: function() {
         return {
@@ -41,7 +41,7 @@ var DisciplinePanel = React.createClass({
                                     <DisciplineForm />
                                 </div>
                             </div>
-
+                            <hr/>
                             <div className="row">
                                 <div className='col-md-12'>
                                     <DisciplineList disciplines={self.state.disciplines}/>

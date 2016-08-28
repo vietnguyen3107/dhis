@@ -145,8 +145,8 @@ var DisciplineForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
         
         return (
             <form className="form">
@@ -273,7 +273,7 @@ var DisciplineForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingDisciplineUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
+                    <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

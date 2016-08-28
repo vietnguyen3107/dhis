@@ -48,7 +48,7 @@ var ExperienceForm = React.createClass({
             this.state.editingExperience[attr].value = val;
         }
 
-        console.log(this.state.editingExperience);
+        //console.log(this.state.editingExperience);
 
 
     },
@@ -68,7 +68,7 @@ var ExperienceForm = React.createClass({
             this.state.editingExperience[attr].value = val;
         }
 
-        console.log(this.state.editingExperience);
+        //console.log(this.state.editingExperience);
 
 
     },
@@ -190,8 +190,8 @@ var ExperienceForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
         
         return (
             <form className="form">
@@ -379,7 +379,7 @@ var ExperienceForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingExperienceUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
+                    <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

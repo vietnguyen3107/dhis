@@ -40,7 +40,7 @@ var DocumentPanel = React.createClass({
                                     <DocumentForm />
                                 </div>
                             </div>
-
+                            <hr/>
                             <div className="row">
                                 <div className='col-md-12'>
                                     <DocumentList documents={self.state.documents}/>

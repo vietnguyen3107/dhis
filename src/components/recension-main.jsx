@@ -14,8 +14,8 @@ var RecensionMain = React.createClass({
         })
     },
 	_onChildChanged: function(newState) {
-		console.log("ne state");
-		console.log(newState);
+		//console.log("ne state");
+		//console.log(newState);
         this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {

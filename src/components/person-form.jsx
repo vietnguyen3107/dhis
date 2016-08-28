@@ -45,7 +45,7 @@ var PersonForm = React.createClass({
         PersonActions.updatePerson(editingPerson);
     },
     _onClickClear: function() {
-        console.log(this.props.orgUnitUid);
+        //console.log(this.props.orgUnitUid);
         PersonActions.clearPerson();
         this.setState({
             isLoading : false,
@@ -80,8 +80,8 @@ var PersonForm = React.createClass({
 
     _onDatePickerChange: function(attr, val, e){
         val = val.format("DD/MM/YYYY");
-        console.log("attr = " +attr);
-        console.log("val = " +val);
+        //console.log("attr = " +attr);
+        //console.log("val = " +val);
 
         if(this.state.editingPerson == null ){
             this.state.editingPerson = {};
@@ -95,14 +95,14 @@ var PersonForm = React.createClass({
             this.state.editingPerson[attr].value = val;
         }
 
-        console.log(this.state.editingPerson);
+        //console.log(this.state.editingPerson);
 
 
     },
     _onDatePickerChangeYYYYMMDD: function(attr, val, e){
         val = val.format("YYYY-MM-DD");
-        console.log("attr = " +attr);
-        console.log("val = " +val);
+        //console.log("attr = " +attr);
+        //console.log("val = " +val);
 
         if(this.state.editingPerson == null ){
             this.state.editingPerson = {};
@@ -116,7 +116,7 @@ var PersonForm = React.createClass({
             this.state.editingPerson[attr].value = val;
         }
 
-        console.log(this.state.editingPerson);
+        //console.log(this.state.editingPerson);
 
 
     },
@@ -161,7 +161,6 @@ var PersonForm = React.createClass({
         }
     },
     componentWillReceiveProps: function(nextProps) {
-      console.log(nextProps.orgUnitUid);
     },
     componentDidMount: function() {
         PersonStore.addEditPersonListener(this._onEdit);
@@ -260,8 +259,8 @@ var PersonForm = React.createClass({
 	},
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Adding...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Adding...' : 'Add'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Updating...' : 'Update'}</Button>);
 
         return (
             <form className="form">
@@ -517,13 +516,13 @@ var PersonForm = React.createClass({
                 </div>
             </div>
 
-
+            <hr/>
 
             <div className="row">
                 <div className="col-md-12 pull-right">
                     {self.state.editingPersonUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                        <Button bsStyle="sm" onClick={self._onClickClear}>Clear</Button>
+                        <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickClear}>Clear</Button>
 
                     </div>
                 </div>

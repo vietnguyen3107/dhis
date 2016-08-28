@@ -41,7 +41,6 @@ var DocumentList = React.createClass({
         }
         return (
             <div>
-                <hr/>
                 <Table responsive>
 					<thead>
 						<tr>

@@ -18,24 +18,27 @@ var Tabs = require("react-bootstrap").Tabs;
 var Tab = require("react-bootstrap").Tab;
 
 var ReceptionMain = React.createClass({
-    _onChange: function() {
+    _onPersonListChange: function() {
         this.setState({
             persons: PersonStore.getPersons(),
+            pager: PersonStore.getPager()
         })
     },
 	_onChildChanged: function(newState) {
+
         this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {
 
         return {
             persons: PersonStore.getPersons(),
+            pager: PersonStore.getPager(),
 			me: [],
 			orgUnitUid: ""
         }
     },
     componentDidMount: function() {
-        PersonStore.addChangeListener(this._onChange);
+        PersonStore.addChangeListener(this._onPersonListChange);
     },
 	componentWillMount: function(){
         var self = this;
@@ -56,7 +59,8 @@ var ReceptionMain = React.createClass({
 			<nav className="navbar navbar-default">
 				<div className="container-fluid">
 				    <div className="navbar-header">
-				      <a className="navbar-brand" href="#">LICENSING</a>
+				    	<img className="pull-left"  src='https://irp-cdn.multiscreensite.com/9a4c81ba/dms3rep/multi/desktop/icon_license_orange-600x600.png' height='48px'/>
+				      <a className="navbar-brand" href="#">&nbsp;LICENSING MANAGER SYSTEM</a>
 				    </div>
 				    <div>
 				      <ul className="nav navbar-nav">
@@ -76,7 +80,7 @@ var ReceptionMain = React.createClass({
 						<div className="panel-body">
 							<div className="row">
 								<div className="col-md-12">
-								<PersonFormSearch me={this.state.me} callbackParent={this._onChildChanged}/>
+								<PersonFormSearch me={this.state.me} pager={this.state.pager} callbackParent={this._onChildChanged}/>
 								</div>
 							</div>
 

@@ -248,9 +248,9 @@ var PersonListRecension = React.createClass({
             <div>
 				
 				<div>
-				<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrintHorizoneForm}><Glyphicon glyph="print" /> Horizone Form</Button>
+				<Button bsStyle="primary" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrintHorizoneForm}><Glyphicon glyph="print" /> Horizone Form</Button>
 				&nbsp;
-				<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickChangeStatusForm}><Glyphicon glyph="retweet" /> Change Status</Button>
+				<Button bsStyle="primary" bsSize="sm" bsSize="xsmall" onClick={self._onClickChangeStatusForm}><Glyphicon glyph="retweet" /> Change Status</Button>
 				</div>
 				<div className="clearfix "/>
                 <Table responsive>
@@ -381,10 +381,10 @@ var PersonListRecension = React.createClass({
 				  <Modal.Body>
 					<div>
 						<div >
-						<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickExportExcel}><Glyphicon glyph="export" /> Export Excel</Button>
+						<Button bsStyle="primary" bsSize="sm" bsSize="xsmall" onClick={self._onClickExportExcel}><Glyphicon glyph="export" /> Export Excel</Button>
 						&nbsp;
 						&nbsp;
-						<Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrint}><Glyphicon glyph="print" /> Print</Button>
+						<Button bsStyle="primary" bsSize="sm" bsSize="xsmall" onClick={self._onClickPrint}><Glyphicon glyph="print" /> Print</Button>
 						</div>
 
 						<div className="clearfix "/>
@@ -487,7 +487,7 @@ var PersonListRecension = React.createClass({
 				  </Modal.Body>
 				  <Modal.Footer>
 				  
-					<Button bsStyle="info" bsSize="sm"  onClick={self._onClickChangeStatus}><Glyphicon glyph="retweet" /> Change</Button>
+					<Button bsStyle="primary" bsSize="sm"  onClick={self._onClickChangeStatus}><Glyphicon glyph="retweet" /> Change</Button>
 					&nbsp;
 					<Button onClick={this._onCloseModalChangeStatusForm}>Close</Button>
 				  </Modal.Footer>

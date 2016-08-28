@@ -26,7 +26,8 @@ var Main = React.createClass({
     },
 	_onChildChanged: function(newState) {
 
-        this.setState({ orgUnitUid: newState.orgUnitUid });
+		//console.log("chikdChange = " + newState.orgUnitUid);
+        //this.setState({ orgUnitUid: newState.orgUnitUid });
     },
     getInitialState: function() {
     	

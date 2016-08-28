@@ -127,8 +127,8 @@ var DocumentForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}><Glyphicon glyph="arrow-down" />{self.state.isLoading? 'Loading...' : ' Save'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}><Glyphicon glyph="save" />{self.state.isLoading? 'Loading...' : ' Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}><Glyphicon glyph="arrow-down" />{self.state.isLoading? 'Loading...' : ' Save'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}><Glyphicon glyph="save" />{self.state.isLoading? 'Loading...' : ' Update'}</Button>);
 
         return (
             <form className="form">
@@ -195,7 +195,7 @@ var DocumentForm = React.createClass({
                 <div className="col-md-12">
                     {self.state.editingDocumentUid ? btnUpdate : btnAdd}
                     <div  className="pull-right">
-                    <Button bsStyle="sm" bsSize="sm" onClick={self._onClickClear}>Clear</Button>
+                    <Button  bsStyle="default" bsSize="sm"  bsSize="sm" onClick={self._onClickClear}>Clear</Button>
                     </div>
                 </div>
             </div>

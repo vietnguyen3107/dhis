@@ -36,7 +36,7 @@ var ExperienceList = React.createClass({
                         </td>
                   
                         <td>
-                            <Button bsStyle="info" bsSize="sm" bsSize="xsmall" onClick={ExperienceActions.editExperience.bind(null, index)}>Edit</Button>
+                            <Button bsStyle="primary" bsSize="sm" bsSize="xsmall" onClick={ExperienceActions.editExperience.bind(null, index)}>Edit</Button>
                         </td>
 
                     </tr>
@@ -45,7 +45,6 @@ var ExperienceList = React.createClass({
         }
         return (
             <div>
-                <div>List</div>
                 <Table responsive>
 					<thead>
 						<tr>

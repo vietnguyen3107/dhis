@@ -107,8 +107,8 @@ var RecensionDetailForm = React.createClass({
     },
     render: function() {
         var self = this;
-        var btnAdd = (<Button bsStyle="info" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
-        var btnUpdate = (<Button bsStyle="info" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
+        var btnAdd = (<Button bsStyle="primary" bsSize="sm" disabled={self.state.isLoading} onClick={self._onClickAdd}>{self.state.isLoading? 'Loading...' : 'Add'}</Button>  );
+        var btnUpdate = (<Button bsStyle="primary" bsSize="sm"  disabled={self.state.isLoading} onClick={self._onClickUpdate}>{self.state.isLoading? 'Loading...' : 'Update'}</Button>);
         
         return (
             <div style={self.props.showStatus != "detail" ?  self.state.hide  : {}}>
@@ -233,10 +233,10 @@ var RecensionDetailForm = React.createClass({
                 <div className="col-md-12">
                     
                     <div  className="pull-left">
-                    <Button bsStyle="sm" onClick={self._onClickAddForm}><Glyphicon glyph="plus" /> Add Person</Button>
+                    <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickAddForm}><Glyphicon glyph="plus" /> Add Person</Button>
                     </div>
                     <div  className="pull-right">
-                    <Button bsStyle="sm" onClick={self._onClickClose}>Exit <Glyphicon glyph="log-out" /></Button>
+                    <Button  bsStyle="default" bsSize="sm"  onClick={self._onClickClose}>Exit <Glyphicon glyph="log-out" /></Button>
                     </div>
                 </div>
             </div>

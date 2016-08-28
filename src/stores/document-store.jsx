@@ -88,8 +88,6 @@ function _searchDocument(index, callback) {
         }
 		
         if (typeof callback === "function") {
-			
-			console.log(_documents);
             callback();
         }
     });

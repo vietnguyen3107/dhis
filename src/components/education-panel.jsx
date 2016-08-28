@@ -39,7 +39,7 @@ var EducationPanel = React.createClass({
                                     <EducationForm />
                                 </div>
                             </div>
-
+                            <hr/>
                             <div className="row">
                                 <div className='col-md-12'>
                                     <EducationList educations={this.state.educations}/>

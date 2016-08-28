@@ -39,7 +39,7 @@ var ExperiencePanel = React.createClass({
                                     <ExperienceForm />
                                 </div>
                             </div>
-
+                            <hr/>
                             <div className="row">
                                 <div className='col-md-12'>
                                     <ExperienceList experiences={this.state.experiences}/>
